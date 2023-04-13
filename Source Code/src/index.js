@@ -7,7 +7,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const pgp = require('pg-promise')();
-require('dotenv').config();
 
 // ***********************************
 // <!-- Section 2 : Initialization-->
@@ -32,6 +31,7 @@ const db = pgp(dbConfig);
 // <!-- Section 3 : Examples Enpoint Implementation-->
 // ****************************************************
 
+app.set('view engine', 'ejs'); // set the view engine to EJS
 // <!-- Endpoint 1 :  Default endpoint ("/") -->
 const message = 'Hey there!';
 app.get('/', (req, res) => {
