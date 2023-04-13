@@ -22,9 +22,6 @@ current streak. They are also shown how many guesses it took them each time they
 | Jamie Graves        | JamieGraves     | jagr3886@colorado.edu |
 | Bryson Smith        | brsm3129        | brsm3129@colorado.edu |
 ## 3 - Tech Stack
-### Weather API - https://www.visualcrossing.com/weather/weather-data-services#
-Our Key is limited to 1000 requests per day
-key - ELQZJAJR73XCLZTG7NY2J6JRB
 ## 4 - Prerequisites 
 ## 5 - Running Locally
 ## 6 - Running Tests
