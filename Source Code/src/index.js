@@ -7,6 +7,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const pgp = require('pg-promise')();
+const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
+const bcrypt = require('bcrypt'); //  To hash passwords
+const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
 
 // ***********************************
 // <!-- Section 2 : Initialization-->
@@ -51,6 +54,21 @@ const user = {
 // ****************************************************
 
 app.set('view engine', 'ejs'); // set the view engine to EJS
+app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: false,
+    resave: false,
+  })
+);
+
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
@@ -115,10 +133,22 @@ app.post('/login', async(req,res)=>{
   });
 });
 
+
+// Authentication Middleware.
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+    // Default to login page.
+    return res.redirect('/login');
+  }
+  next();
+};
+
+// Authentication Required
+app.use(auth);
+
 // *********************************
 // <!-- Section 5 : Start Server-->
 // *********************************
 // starting the server and keeping the connection open to listen for more requests
-module.exports = app.listen(3000, () => {
-  console.log('listening on port 3000');
-});
+module.exports = app.listen(3000);
+console.log('Server is listening on port 3000');
