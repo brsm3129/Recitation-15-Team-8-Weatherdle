@@ -26,7 +26,7 @@ describe('Server!', () => {
   // ===========================================================================
   // TO-DO: Part A Login unit test case
   //We are checking POST /add_user API by passing the user info in the correct order. This test case should pass and return a status 200 along with a "Success" message.
-//Positive cases
+// Positive cases
 // it('positive : /login', done => {
 //   chai
 //     .request(server)
