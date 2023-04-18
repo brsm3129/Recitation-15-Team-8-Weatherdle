@@ -1,6 +1,17 @@
 # Recitation-15-Team-8-Weatherdle
 
 ## 1 - Description
+Upon opening the application, the user is prompted to register an account and login.
+This will bring the user to the home page which portrays the official game. Along with the game,
+there will be a button that allows the user to look at the instructions on how to play the game.
+The game is called “Weatherdle” in which the user is given weather facts, including
+average temperature, average clouds, and yearly precipitation for guessing a city by weather
+information. Upon each guess the user gives, it is then compared to the actual answer, and the
+application outputs hints based on that guess, such as how high or low the average temperature
+is of the city they guessed compared to that of the answer.
+After the user has correctly guessed the city, they are then prompted with a sort of
+leaderboard showing their statistics such as the number of times played, win percentage, and
+current streak. They are also shown how many guesses it took them each time they played.
 ## 2 - Contributors
 | First and Last Name | GitHub Username | Email                 |
 |---------------------|-----------------|-----------------------|
