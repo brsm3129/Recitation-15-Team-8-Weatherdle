@@ -3,22 +3,6 @@ https://www.visualcrossing.com/weather/weather-data-services
 ## Requests
 Unfortunately yearly average data is locked behind paid APIs so we will have to make due with using data from the past year.
 
-### Yearly Data
-3. Request the monthly climate data for the last 30 years
-
-If you need to know what the weather is normally like at a particular location, the historical summaries provide climate level data of what you can except for any year, month, week or even day throughout the year.
-
-https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/weatherdata/historysummary?&minYear=1989&maxYear=2019&chronoUnit=months&breakBy=self&dailySummaries=false&contentType=csv&unitGroup=us&key=YOUR_API_KEY&locations=New York City,NY  
-
-We will need to turn this into a JSON request.
-
-The results are CSV again and provide a monthly climate for New York City. If you want to change between yearly, monthly or weekly summaries, change the ‘chronoUnit’ parameter. If you want to break by years, change breakBy=self to breakBy=years
-
-
-Period,Address,Date time,Minimum Temperature,Maximum Temperature,Temperature,Dew Point,Relative Humidity,Heat Index,Wind Speed,Wind Gust,Wind Direction,Wind Chill,Precipitation,Precipitation Cover,Snow Depth,Visibility,Cloud Cover,Sea Level Pressure
- "Jan","New York City, NY","",-2.6,70.3,33.8,21.4,62.01,,39.5,56.5,225.36,-24,114.29,9.98,4.7,1,42.4,1017.9
- "Feb","New York City, NY","",0.2,72.4,35.5,21.3,58.62,,33.6,57.5,220.22,-19.5,80.64,8.97,4.5,1,39.4,1017.4
-
 ### Spring Equinox Data
 Template: 
 Data needed before request
