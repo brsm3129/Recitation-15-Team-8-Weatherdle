@@ -1,0 +1,109 @@
+<%- include ('../partials/head') %>
+<%- include ('../partials/menu') %>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .header {
+            background-color: gray;
+        }
+    </style>
+
+
+</head>
+
+
+<body>
+
+
+    <div class="container">
+            <div class="btn-group">
+                <a href="#" class="btn btn-primary active" aria-current="page">Global</a>
+                <a href="#" class="btn btn-primary">Friends</a>
+            </div>
+        <br>
+        <br>
+
+        <table style="width:70%">
+            <tr class="header">
+                <th>rank</th>
+                <th>Username</th>
+                <th>Streak</th>
+                <th>Avg Guesses</th>
+            </tr>
+            <tr>
+                <td>
+                    <h5>1</h5>
+                </td>
+                <td>
+                    <table>
+                        <td style="width:10%"><img
+                                src="https://static.vecteezy.com/system/resources/previews/009/314/440/original/earth-globe-clip-art-vector-illustration-isolated-free-png.png"
+                                width="30"></td>
+                        <td>
+                            <h5>coolkid68</h5>
+                        </td>
+                    </table>
+                </td>
+
+
+                <td>102</td>
+                <td>3.7</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <h5>2</h5>
+                </td>
+                <td>
+                    <table>
+                        <td style="width:10%"><img
+                                src="https://static.vecteezy.com/system/resources/previews/009/314/440/original/earth-globe-clip-art-vector-illustration-isolated-free-png.png"
+                                width="30"></td>
+                        <td>
+                            <h5>peba1207</h5>
+                        </td>
+                    </table>
+                </td>
+
+
+                <td>83</td>
+                <td>5</td>
+            </tr>
+
+            <tr>
+                <td>
+                    <h5>3</h5>
+                </td>
+                <td>
+                    <table>
+                        <td style="width:10%"><img
+                                src="https://static.vecteezy.com/system/resources/previews/009/314/440/original/earth-globe-clip-art-vector-illustration-isolated-free-png.png"
+                                width="30"></td>
+                        <td>
+                            <h5>joe</h5>
+                        </td>
+                    </table>
+                </td>
+
+
+                <td>31</td>
+                <td>3.3</td>
+            </tr>
+        </table>
+    </div>
+
+    <%- include ('../partials/footer') %>
