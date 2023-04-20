@@ -55,7 +55,7 @@ const user = {
 
 app.set('view engine', 'ejs'); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
-
+app.use(express.static('resources'))
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
