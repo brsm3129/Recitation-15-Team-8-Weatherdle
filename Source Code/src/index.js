@@ -80,7 +80,11 @@ app.get('/welcome', (req, res) => {
 
 // TODO - Include your API routes here
 app.get('/', (req, res) => {
-  res.redirect('/login'); //this will call the /anotherRoute route in the API
+  //check if first time
+    //if user has a session stored pull up their game
+    //if not pull up fresh page and instructions
+  //res.json({message:'first visit'})
+  res.redirect('/weatherdle'); 
 });
 
 app.get('/login', (req,res) => {
@@ -89,6 +93,14 @@ app.get('/login', (req,res) => {
 
 app.get('/register', (req, res) => {
   res.render('pages/register');
+});
+
+app.get('/weatherdle', (req,res) => {
+  res.render('pages/weatherdle');
+});
+
+app.post('/weatherdle', (req,res) => {
+  res.render('pages/weatherdle')
 });
 
 // Register
