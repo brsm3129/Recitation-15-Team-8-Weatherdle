@@ -1,21 +1,28 @@
-<%- include ('../partials/head') %> <%- include ('../partials/menu') %>
+<%- include ('../partials/head') %>
 <div class="col"><%- include ('../partials/message') %></div>
 
 <main>
   <div class="container">
-    <form action="/login" method="POST">
-        <h2>Login</h2>
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="name" name="username" class="form-control"/>
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" class="form-control" />
-        </div>
-        <p>Don't have an account? <a href="/register">Register</a></p>
-        <input type="submit" value="Submit" />
-    </form>
+    <div class="col-md-9 col-lg-6 col-xl-5">
+      <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp" alt="Sample image" style="position: absolute;left:80px">
+    </div>
+    <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1" id="login" style="position: absolute;top:100px; right:100px">
+      <form action="/login" method="POST">
+          <h2>Login</h2>
+          <div class="form-outline mb-4">
+              <label for="username">Username:</label>
+              <input type="text" id="name" name="username" class="form-control"/>
+          </div>
+          <div class="form-outline mb-3">
+              <label for="password">Password:</label>
+              <input type="password" id="password" name="password" class="form-control"/>
+          </div>
+          <div class="text-center text-lg-start mt-4 pt-2">
+            <input type="submit" value="Login" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;"/>
+            <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="/register" class="link-danger">Register</a></p>
+          </div>
+      </form>
+    </div>
   </div>
 </main>
 
