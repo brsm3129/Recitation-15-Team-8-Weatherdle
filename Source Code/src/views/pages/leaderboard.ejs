@@ -27,7 +27,13 @@
 
 
 <body>
-
+    <%
+    var thing = "word";
+    thing = locals.users[0].avgGuess;
+    %>
+    <h1>
+        <%- thing %>
+    </h1>
 
     <div class="container">
             <div class="btn-group">
@@ -44,6 +50,8 @@
                 <th>Streak</th>
                 <th>Avg Guesses</th>
             </tr>
+
+            <!-- SAMPLE ROW
             <tr>
                 <td>
                     <h5>1</h5>
@@ -63,46 +71,17 @@
                 <td>102</td>
                 <td>3.7</td>
             </tr>
-
-            <tr>
-                <td>
-                    <h5>2</h5>
-                </td>
-                <td>
-                    <table>
-                        <td style="width:10%"><img
-                                src="https://static.vecteezy.com/system/resources/previews/009/314/440/original/earth-globe-clip-art-vector-illustration-isolated-free-png.png"
-                                width="30"></td>
-                        <td>
-                            <h5>peba1207</h5>
-                        </td>
-                    </table>
-                </td>
-
-
-                <td>83</td>
-                <td>5</td>
-            </tr>
-
-            <tr>
-                <td>
-                    <h5>3</h5>
-                </td>
-                <td>
-                    <table>
-                        <td style="width:10%"><img
-                                src="https://static.vecteezy.com/system/resources/previews/009/314/440/original/earth-globe-clip-art-vector-illustration-isolated-free-png.png"
-                                width="30"></td>
-                        <td>
-                            <h5>joe</h5>
-                        </td>
-                    </table>
-                </td>
-
-
-                <td>31</td>
-                <td>3.3</td>
-            </tr>
+              -->
+            <%
+            var tableData = '';
+            var i = 0;
+            locals.users.forEach(function(item){
+                i = i + 1;
+                tableData = tableData + '<tr><td><h5>' + i + '</h5></td><td><table><td style="width:10%"><img src="https://static.vecteezy.com/system/resources/previews/009/314/440/original/earth-globe-clip-art-vector-illustration-isolated-free-png.png" width="30"></td><td><h5>' + 
+                item.username + '</h5></td></table></td><td>' + item.streak + '</td><td>' + item.avgguess + '</td></tr>';
+            })
+            %>
+            <%- tableData %>
         </table>
     </div>
 
