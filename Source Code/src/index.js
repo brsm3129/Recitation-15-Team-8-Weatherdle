@@ -134,6 +134,38 @@ app.post('/login', async(req,res)=>{
   });
 });
 
+app.post('/apitest', async(req,res) => {
+  axios({
+    url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Denver%20Colorado/2023-03-17/2023-03-24?`,
+    method: 'GET',
+    dataType: 'json',
+    headers: {
+      'Accept-Encoding': 'application/json',
+    },
+    params: {
+      contentType: req.body.contentType,
+      unitGroup:'us',
+      elements: 'datetime%2Ctempmax%2Ctempmin%2Chumidity%2Cprecip%2Csnow%2Csnowdepth%2Cwindgust%2Csunrise%2Csunset',
+      include: 'stats%2C',
+      key: process.env.API_KEY
+    }
+  })
+    .then(results => {
+      console.log(results.data.resolvedAddress); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+
+      res.status(200).json({
+        message:results.data.resolvedAddress
+      });
+
+    })
+    .catch(error => {
+      // Handle errors
+      res.status(400).json({
+        error: "API Key was not valid"
+      });
+    });
+});
+
 
 // Authentication Middleware.
 const auth = (req, res, next) => {
