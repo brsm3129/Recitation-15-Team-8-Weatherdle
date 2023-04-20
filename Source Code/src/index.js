@@ -115,6 +115,7 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async(req,res)=>{
   // check if password from request matches with password in DB
+
   db.query("SELECT password FROM users WHERE username = ($1);", [req.body.username])
   .then(async query => {
     const passwordMatch = await bcrypt.compare(req.body.password, query[0].password);
@@ -125,7 +126,7 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/discover');
+      res.redirect('/login');
     }
   })
   .catch(error => {
