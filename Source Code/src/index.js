@@ -19,6 +19,8 @@ const axios = require('axios'); // To make HTTP requests from our server. We'll 
 const app = express();
 // using bodyParser to parse JSON in the request body into JS objects
 app.use(bodyParser.json());
+// allows use of resources
+app.use( express.static( "resources" ) );
 // Database connection details
 const dbConfig = {
   host: 'db',
