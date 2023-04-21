@@ -126,7 +126,7 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/login');
+      res.redirect('/weatherdle');
     }
   })
   .catch(error => {
