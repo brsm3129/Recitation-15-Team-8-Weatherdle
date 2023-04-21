@@ -5,8 +5,60 @@
 <!--Guesses Data should be a JSON array-->
 <div class="container">
     <h1>Weatherdle</h1>
-    <h5></h5>
-
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">City Name</th>
+            <th scope="col">Summer Hi</th>
+            <th scope="col">Summer Lo</th>
+            <th scope="col">Summer Day</th>
+            <th scope="col">Winter Hi</th>
+            <th scope="col">Winter Lo</th>
+            <th scope="col">Winter Day</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Denver Colorado</th>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>12</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>12</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>12</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-success">
+                <div class="top-box">
+                    <div>12</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>12</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-warning">
+                <div class="top-box">
+                    <div>12</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 </div>
 
 <%- include ('../partials/footer') %>

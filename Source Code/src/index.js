@@ -188,6 +188,7 @@ const auth = (req, res, next) => {
   next();
 };
 
+
 // Authentication Required
 app.use(auth);
 
