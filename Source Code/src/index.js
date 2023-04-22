@@ -126,12 +126,16 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/weatherdle');
+      res.redirect('/discover');
     }
   })
   .catch(error => {
     res.redirect('/register');
   });
+});
+
+app.get("/discover", (req, res) => {
+  res.render('pages/discover');
 });
 
 app.post('/apitest', async(req,res) => {
@@ -165,7 +169,6 @@ app.post('/apitest', async(req,res) => {
       });
     });
 });
-
 
 // Authentication Middleware.
 const auth = (req, res, next) => {
