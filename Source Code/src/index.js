@@ -170,6 +170,17 @@ app.post('/apitest', async(req,res) => {
     });
 });
 
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error(err);
+      res.json({ success: false });
+    } else {
+      res.json({ success: true });
+    }
+  });
+});
+
 // Authentication Middleware.
 const auth = (req, res, next) => {
   if (!req.session.user) {
