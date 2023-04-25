@@ -132,11 +132,6 @@ app.post('/weatherdle', (req,res) => {
   res.render('pages/weatherdle')
 });
 
-// Register
-app.post('/register', async (req, res) => {
-  //hash the password using bcrypt library
-});
-
 
   // Register
   app.post('/register', async (req, res) => {
@@ -159,26 +154,6 @@ app.post('/register', async (req, res) => {
       });
   });
 
-
-  app.post('/login', async (req, res) => {
-    // check if password from request matches with password in DB
-    db.query("SELECT password FROM users WHERE username = ($1);", [req.body.username])
-      .then(async query => {
-        const passwordMatch = await bcrypt.compare(req.body.password, query[0].password);
-        user.username = req.body.username;
-        if (!user || !passwordMatch) {
-          res.render('pages/login', { message: "Incorrect username or password", error: true });
-        }
-        else {
-          req.session.user = user;
-          req.session.save();
-          res.redirect('/discover');
-        }
-      })
-      .catch(error => {
-        res.redirect('/register');
-      });
-    });
 app.post('/login', async(req,res)=>{
   // check if password from request matches with password in DB
 
@@ -192,15 +167,12 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/discover');
+      res.redirect('/weatherdle');
     }
   })
   .catch(error => {
     res.redirect('/register');
   });
-});
-app.get("/discover", (req, res) => {
-  res.render('pages/discover');
 });
 
 app.post('/apitest', async(req,res) => {
