@@ -138,7 +138,7 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/discover');
+      res.redirect('/weatherdle');
     }
   })
   .catch(error => {
@@ -146,8 +146,8 @@ app.post('/login', async(req,res)=>{
   });
 });
 
-app.get("/discover", (req, res) => {
-  res.render('pages/discover');
+app.get("/weatherdle", (req, res) => {
+  res.render('pages/weatherdle');
 });
 
 app.post('/apitest', async(req,res) => {
