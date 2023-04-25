@@ -4,6 +4,13 @@ CREATE TABLE users(
     password CHAR(60) NOT NULL
 );
 
+DROP TABLE IF EXISTS guesses CASCADE;
+CREATE TABLE guesses(
+    username VARCHAR(50) PRIMARY KEY,
+    puzzlenum INTEGER SECOND KEY,
+	guess VARCHAR(50) NOT NULL
+);
+
 DROP TABLE IF EXISTS userdata CASCADE;
 CREATE TABLE userdata(
     username VARCHAR(50) PRIMARY KEY, 
