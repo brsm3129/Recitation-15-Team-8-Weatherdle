@@ -185,9 +185,9 @@ app.post('/apitest', async(req,res) => {
 app.get("/abc",async(req,res)=>{
 
   const stateCapitals = [
-    { state: 'Alabama', city: 'Montgomery' },
-    { state: 'Alaska', city: 'Juneau' },
-    { state: 'Arizona', city: 'Phoenix' },
+    { state: 'Alabama', city: 'Montgomery'},
+    { state: 'Alaska', city: 'Juneau'},
+    { state: 'Arizona', city: 'Phoenix'},
     // Add more state capitals as necessary
   ];
   const date= '2023-03-17'
@@ -221,8 +221,8 @@ for(let i=1; i< stateCapitals.length;i++){
         ]);
         // Insert data into database
         console.log(formattedData);  //high_temp, low_temp, sunrise, sunset
-      const query = 'INSERT INTO weather_data (city, sta, dat) VALUES ?';
-      db.any(query, [formattedData])
+      const query = `INSERT INTO weather_data (city, state, date, high_temp, low_temp, sunrise, sunset) VALUES ${formattedData.map(data => `('${data.join("', '")}')`).join(', ')};`;
+      db.any(query)
       .then((data)=>{
         console.log(`Weather data for ${city}, ${state} inserted successfully!`);
       })
