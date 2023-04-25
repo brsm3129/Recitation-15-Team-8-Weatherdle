@@ -19,6 +19,8 @@ const axios = require('axios'); // To make HTTP requests from our server. We'll 
 const app = express();
 // using bodyParser to parse JSON in the request body into JS objects
 app.use(bodyParser.json());
+// allows use of resources
+app.use( express.static( "resources" ) );
 // Database connection details
 const dbConfig = {
   host: 'db',
@@ -41,12 +43,12 @@ db.connect()
   });
 
 const user = {
-    username: undefined,
-    password: undefined,
-    first_name: undefined,
-    last_name: undefined,
-    email: undefined,
-  };
+  username: undefined,
+  password: undefined,
+  first_name: undefined,
+  last_name: undefined,
+  email: undefined,
+};
 
 
 // ****************************************************
@@ -71,7 +73,7 @@ app.use(
 );
 
 app.get('/welcome', (req, res) => {
-  res.json({status: 'success', message: 'Welcome!'});
+  res.json({ status: 'success', message: 'Welcome!' });
 });
 
 // ************************************************
@@ -87,7 +89,7 @@ app.get('/', (req, res) => {
   res.redirect('/weatherdle'); 
 });
 
-app.get('/login', (req,res) => {
+app.get('/login', (req, res) => {
   res.render('pages/login');
 })
 
@@ -95,6 +97,33 @@ app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
+app.get('/input_test', (req,res) => {
+  res.render('pages/input_test');
+});
+
+app.post('/submit', (req,res) => {
+  console.log(req.body);
+  res.redirect('/input_test');
+});
+
+app.get('/leaderboard', (req, res) => {
+  //order by streak, then by average if the streak is the same
+  var query = "select * from userdata ORDER BY streak DESC, avgGuess ASC;";
+  var scope = req.query.scope;
+  var sort = req.query.sort;
+  console.log(sort);
+  if (sort == "avg"){
+      //order by average, then by streak if the average is the same
+    query = "select * from userdata ORDER BY avgGuess ASC, streak DESC;";
+  }
+  db.any(query)
+  
+  .then(users =>{
+    res.render('pages/leaderboard', {
+      users, 
+    });
+  });
+});
 app.get('/weatherdle', (req,res) => {
   res.render('pages/weatherdle');
 });
@@ -103,27 +132,27 @@ app.post('/weatherdle', (req,res) => {
   res.render('pages/weatherdle')
 });
 
-// Register
-app.post('/register', async (req, res) => {
-  //hash the password using bcrypt library
 
-  // To-DO: Insert username and hashed password into 'users' table
-  //hash the password using bcrypt library
-  const hash = await bcrypt.hash(req.body.password, 10);
+  // Register
+  app.post('/register', async (req, res) => {
+    //hash the password using bcrypt library
+
+    // To-DO: Insert username and hashed password into 'users' table
+    //hash the password using bcrypt library
+    const hash = await bcrypt.hash(req.body.password, 10);
 
     // Insert username and hashed password into 'users' table
-  let query = db.query('INSERT INTO users (username, password) VALUES ($1, $2)', [req.body.username, hash])
+    let query = db.query('INSERT INTO users (username, password) VALUES ($1, $2)', [req.body.username, hash])
 
-    // Redirect to GET /login route page after data has been inserted successfully.
-  .then (query => {
-    res.redirect('/login');
-  })
-  .catch (error => {
-    // If the insert fails, redirect to GET /register route.
-    res.render('pages/register', {message: "Error: Registration Failed", error:true});
+      // Redirect to GET /login route page after data has been inserted successfully.
+      .then(query => {
+        res.redirect('/login');
+      })
+      .catch(error => {
+        // If the insert fails, redirect to GET /register route.
+        res.render('pages/register', { message: "Error: Registration Failed", error: true });
+      });
   });
-});
-
 
 app.post('/login', async(req,res)=>{
   // check if password from request matches with password in DB
@@ -144,10 +173,6 @@ app.post('/login', async(req,res)=>{
   .catch(error => {
     res.redirect('/register');
   });
-});
-
-app.get("/weatherdle", (req, res) => {
-  res.render('pages/weatherdle');
 });
 
 app.post('/apitest', async(req,res) => {
@@ -193,22 +218,22 @@ app.post('/logout', (req, res) => {
   });
 });
 
-// Authentication Middleware.
-const auth = (req, res, next) => {
-  if (!req.session.user) {
-    // Default to login page.
-    return res.redirect('/login');
-  }
-  next();
-};
+  // Authentication Middleware.
+  const auth = (req, res, next) => {
+    if (!req.session.user) {
+      // Default to login page.
+      return res.redirect('/login');
+    }
+    next();
+  };
 
 
 // Authentication Required
 app.use(auth);
 
-// *********************************
-// <!-- Section 5 : Start Server-->
-// *********************************
-// starting the server and keeping the connection open to listen for more requests
-module.exports = app.listen(3000);
-console.log('Server is listening on port 3000');
+  // *********************************
+  // <!-- Section 5 : Start Server-->
+  // *********************************
+  // starting the server and keeping the connection open to listen for more requests
+  module.exports = app.listen(3000);
+  console.log('Server is listening on port 3000');
