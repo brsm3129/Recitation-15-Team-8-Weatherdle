@@ -1,0 +1,12 @@
+.guess-square {
+    height:100px;
+    max-width:100px;
+    min-width:100px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.guess-header {
+    text-align:center;
+}
