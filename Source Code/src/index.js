@@ -57,7 +57,7 @@ const user = {
 
 app.set('view engine', 'ejs'); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
-
+app.use(express.static('resources'));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -82,7 +82,11 @@ app.get('/welcome', (req, res) => {
 
 // TODO - Include your API routes here
 app.get('/', (req, res) => {
-  res.redirect('/login'); //this will call the /anotherRoute route in the API
+  //check if first time
+    //if user has a session stored pull up their game
+    //if not pull up fresh page and instructions
+  //res.json({message:'first visit'})
+  res.redirect('/weatherdle'); 
 });
 
 app.get('/login', (req, res) => {
@@ -110,8 +114,20 @@ app.get('/leaderboard', (req, res) => {
       users, 
     });
   });
+});
+app.get('/weatherdle', (req,res) => {
+  res.render('pages/weatherdle');
+});
 
-  });
+app.post('/weatherdle', (req,res) => {
+  res.render('pages/weatherdle')
+});
+
+// Register
+app.post('/register', async (req, res) => {
+  //hash the password using bcrypt library
+});
+
 
   // Register
   app.post('/register', async (req, res) => {
@@ -153,8 +169,73 @@ app.get('/leaderboard', (req, res) => {
       .catch(error => {
         res.redirect('/register');
       });
-  });
+    });
+app.post('/login', async(req,res)=>{
+  // check if password from request matches with password in DB
 
+  db.query("SELECT password FROM users WHERE username = ($1);", [req.body.username])
+  .then(async query => {
+    const passwordMatch = await bcrypt.compare(req.body.password, query[0].password);
+    user.username = req.body.username;
+    if(!user || !passwordMatch){
+      res.render('pages/login', {message: "Incorrect username or password", error:true});
+    }
+    else{
+      req.session.user = user;
+      req.session.save();
+      res.redirect('/discover');
+    }
+  })
+  .catch(error => {
+    res.redirect('/register');
+  });
+});
+app.get("/discover", (req, res) => {
+  res.render('pages/discover');
+});
+
+app.post('/apitest', async(req,res) => {
+  axios({
+    url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Denver%20Colorado/2023-03-17/2023-03-24?`,
+    method: 'GET',
+    dataType: 'json',
+    headers: {
+      'Accept-Encoding': 'application/json',
+    },
+    params: {
+      contentType: req.body.contentType,
+      unitGroup:'us',
+      elements: 'datetime%2Ctempmax%2Ctempmin%2Chumidity%2Cprecip%2Csnow%2Csnowdepth%2Cwindgust%2Csunrise%2Csunset',
+      include: 'stats%2C',
+      key: process.env.API_KEY
+    }
+  })
+    .then(results => {
+      console.log(results.data.resolvedAddress); // the results will be displayed on the terminal if the docker containers are running // Send some parameters
+
+      res.status(200).json({
+        message:results.data.resolvedAddress
+      });
+
+    })
+    .catch(error => {
+      // Handle errors
+      res.status(400).json({
+        error: "API Key was not valid"
+      });
+    });
+});
+
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error(err);
+      res.json({ success: false });
+    } else {
+      res.json({ success: true });
+    }
+  });
+});
 
   // Authentication Middleware.
   const auth = (req, res, next) => {
@@ -165,8 +246,9 @@ app.get('/leaderboard', (req, res) => {
     next();
   };
 
-  // Authentication Required
-  app.use(auth);
+
+// Authentication Required
+app.use(auth);
 
   // *********************************
   // <!-- Section 5 : Start Server-->

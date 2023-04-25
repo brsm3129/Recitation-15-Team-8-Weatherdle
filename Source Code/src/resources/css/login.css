@@ -1,0 +1,16 @@
+#login{
+    float:right;
+}
+
+#image{
+    position: absolute; left:80px
+}
+
+#login{
+    position: absolute;top:100px; right:100px
+}
+
+#btn{
+    padding-left: 2.5rem; 
+    padding-right: 2.5rem;
+}

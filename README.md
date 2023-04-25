@@ -24,5 +24,8 @@ current streak. They are also shown how many guesses it took them each time they
 ## 3 - Tech Stack
 ## 4 - Prerequisites 
 ## 5 - Running Locally
+1. Clone Repo
+2. cd into repo/Source Code/src
+3. docker-compose up
 ## 6 - Running Tests
 ## 7 - Deployed Application
