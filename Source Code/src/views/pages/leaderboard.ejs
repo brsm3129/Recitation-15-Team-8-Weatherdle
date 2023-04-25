@@ -1,0 +1,96 @@
+<%- include ('../partials/head') %>
+    <%- include ('../partials/menu') %>
+        <style>
+            table {
+                border-collapse: collapse;
+                width: 100%;
+
+            }
+
+            th,
+            td {
+                text-align: left;
+                padding: 8px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            .header {
+                background-color: gray;
+            }
+        </style>
+
+
+        </head>
+
+
+        <body>
+            
+            <% var thing="word" ; thing=locals.users[0].avgGuess; %>
+                <h1>
+                    <%- thing %>
+                </h1>
+                    
+                <div class="container">
+                    <form action = "/leaderboard" method = "GET">
+                    <div class="btn-group">
+                        <button class="btn btn-primary active" aria-current="page" name ="scope" value = "global">Global</button>
+                        <button class="btn btn-primary" name = "scope" value = "friends">Friends</button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger">Sort by</button>
+                        <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                          <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li><button class="dropdown-item" name ="sort" value = "streak" type="submit">Streak</button></li>
+                          <li><button class="dropdown-item" name ="sort" value = "avg" type="submit">Average</button></li>
+                        </ul>
+                      </div>
+                    </form>
+                    <br>
+                    <br>
+
+                    <table style="width:70%">
+                        <tr class="header">
+                            <th>rank</th>
+                            <th>Username</th>
+                            <th>Streak</th>
+                            <th>Avg Guesses</th>
+                        </tr>
+
+                        <!--SAMPLE ROW-->
+                        <!--
+                            <tr>
+                            <td>
+                                <h5>1</h5>
+                            </td>
+                            <td>
+                                <table>
+                                    <td style="width:10%">
+                                        <img src="img/pfp2.png" width="30" height="30" class="rounded-circle">
+                                    </td>
+
+                                    <td>
+                                        <h5>coolkid68</h5>
+                                    </td>
+                                </table>
+                            </td>
+
+
+                            <td>102</td>
+                            <td>3.7</td>
+                        </tr>
+                    -->
+                        <% var tableData='' ; var i=0; locals.users.forEach(function(item){ i=i + 1; tableData=tableData
+                            + '<tr><td><h5>' + i + '</h5></td><td><table><td style="width:10%"><img src="img/pfp' +
+                            item.pfp + '.png" width="30" class="rounded"></td><td><h5>' + item.username
+                            + '</h5></td></table></td><td>' + item.streak + '</td><td>' + item.avgguess + '</td></tr>' ;
+                            }) %>
+                            <%- tableData %>
+                    </table>
+                </div>
+
+                <%- include ('../partials/footer') %>
