@@ -199,6 +199,62 @@ app.post('/apitest', async(req,res) => {
     });
 });
 
+app.get("/abc",async(req,res)=>{
+
+  const stateCapitals = [
+    { state: 'Alabama', city: 'Montgomery' },
+    { state: 'Alaska', city: 'Juneau' },
+    { state: 'Arizona', city: 'Phoenix' },
+    // Add more state capitals as necessary
+  ];
+  const date= '2023-03-17'
+for(let i=1; i< stateCapitals.length;i++){  
+  const { state, city } = stateCapitals[i];
+  axios({
+    url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date}`,
+    method: 'GET',
+    dataType: 'json',
+    headers: {
+      'Accept-Encoding': 'application/json',
+    },
+    params: {
+      unitGroup: 'us',
+      include: 'obs',
+      key: process.env.API_KEY
+    }, 
+  })
+    .then(results => {
+      const data = results.data;
+      const { resolvedAddress, days } = data;
+ 
+      const formattedData = days.map(day => [
+         city,
+         state, 
+         day.datetime, 
+         day.tempmax, 
+         day.tempmin,
+         day.sunrise,  
+         day.sunset
+        ]);
+        // Insert data into database
+        console.log(formattedData);  //high_temp, low_temp, sunrise, sunset
+      const query = 'INSERT INTO weather_data (city, sta, dat) VALUES ?';
+      db.any(query, [formattedData])
+      .then((data)=>{
+        console.log(`Weather data for ${city}, ${state} inserted successfully!`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      //   if (error) throw error;
+        
+      })
+      
+  }
+
+}); 
+
+
 app.post('/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
