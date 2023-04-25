@@ -97,14 +97,10 @@ app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
-app.get('/input_test', (req,res) => {
-  res.render('pages/input_test');
-});
-
-app.post('/submit', (req,res) => {
+/*app.post('/submit', (req,res) => {
   console.log(req.body);
   res.redirect('/input_test');
-});
+});*/
 
 app.get('/leaderboard', (req, res) => {
   //order by streak, then by average if the streak is the same
