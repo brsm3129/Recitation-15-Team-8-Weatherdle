@@ -92,9 +92,19 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
+
 app.get('/leaderboard', (req, res) => {
-  const query = "select * from userdata ORDER BY streak DESC;";
+  //order by streak, then by average if the streak is the same
+  var query = "select * from userdata ORDER BY streak DESC, avgGuess ASC;";
+  var scope = req.query.scope;
+  var sort = req.query.sort;
+  console.log(sort);
+  if (sort == "avg"){
+      //order by average, then by streak if the average is the same
+    query = "select * from userdata ORDER BY avgGuess ASC, streak DESC;";
+  }
   db.any(query)
+  
   .then(users =>{
     res.render('pages/leaderboard', {
       users, 
