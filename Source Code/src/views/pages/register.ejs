@@ -1,22 +1,28 @@
 <%- include ('../partials/head') %>
-<%- include ('../partials/menu') %>
 <div class="col"><%- include ('../partials/message') %></div>
 
 <main>
   <div class="container">
-    <form action="/register" method="POST">
-        <h2>Register</h2>
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="name" name="username" class="form-control"/>
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" class="form-control" />
-        </div>
-        <p>Already have an account? <a href="/login">Login</a></p>
-        <input type="submit" value="Submit" />
-    </form>
+    <div class="col-md-9 col-lg-6 col-xl-5">
+      <img id="image" src="img/Login-Image.webp" alt="Sample image">
+    </div>
+    <div id="login" class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+      <form action="/register" method="POST">
+          <h2>Register</h2>
+          <div class="form-outline mb-4">
+              <label for="username">Username:</label>
+              <input type="text" id="name" name="username" class="form-control"/>
+          </div>
+          <div class="form-outline mb-3">
+              <label for="password">Password:</label>
+              <input type="password" id="password" name="password" class="form-control"/>
+          </div>
+          <div class="text-center text-lg-start mt-4 pt-2">
+            <input id="btn" type="submit" value="Login" class="btn btn-primary btn-lg"/>
+            <p class="small fw-bold mt-2 pt-1 mb-0">Already have an account? <a href="/login" class="link-danger">Login</a></p>
+          </div>
+      </form>
+    </div>
   </div>
 </main>
 

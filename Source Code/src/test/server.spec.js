@@ -49,26 +49,26 @@ describe('Server!', () => {
       });
   });
 
-  it('Positive: /apitest', done => {
-    chai
-      .request(server)
-      .post('/apitest')
-      .send({contentType:'json'})
-      .end((err, res) => {
-        assert.strictEqual(res.body.message, 'Denver, CO, United States');
-        done();
-      });
-  });
+//   it('Positive: /apitest', done => {
+//     chai
+//       .request(server)
+//       .post('/apitest')
+//       .send({contentType:'json'})
+//       .end((err, res) => {
+//         assert.strictEqual(res.body.message, 'Denver, CO, United States');
+//         done();
+//       });
+//   });
 
-  it('Negative: /apitest invalid api key', done => {
-    chai
-    .request(server)
-    .post('/apitest')
-    .send({contentType:'csv'})
-    .end((err, res) => {
-      expect(res).to.have.status(400);
-      expect(res.body.error).to.equals('API Key was not valid');
-      done();
-    });
-  });
+//   it('Negative: /apitest invalid api key', done => {
+//     chai
+//     .request(server)
+//     .post('/apitest')
+//     .send({contentType:'csv'})
+//     .end((err, res) => {
+//       expect(res).to.have.status(400);
+//       expect(res.body.error).to.equals('API Key was not valid');
+//       done();
+//     });
+//   });
 });

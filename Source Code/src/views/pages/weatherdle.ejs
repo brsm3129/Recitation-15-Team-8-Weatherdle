@@ -2,9 +2,137 @@
 <%- include ('../partials/menu') %>
 <%- include ('../partials/message') %>
 
-
+<!--Guesses Data should be a JSON array-->
 <div class="container">
     <h1>Weatherdle</h1>
+    <p>Guess 3/8</p>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" class="guess-header">City Name</th>
+            <th scope="col" class="guess-header">Summer Hi</th>
+            <th scope="col" class="guess-header">Summer Lo</th>
+            <th scope="col" class="guess-header">Longest Day</th>
+            <th scope="col" class="guess-header">Winter Hi</th>
+            <th scope="col" class="guess-header">Winter Lo</th>
+            <th scope="col" class="guess-header">Shortest Day</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="guess-header">Denver Colorado</th>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>88</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-warning">
+                <div class="top-box">
+                    <div>62</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-warning">
+                <div class="top-box">
+                    <div>14 hours 59 minutes</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>46</div>
+                    <div class="arrow">↑</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>23</div>
+                    <div class="arrow">↑</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-warning">
+                <div class="top-box">
+                    <div>9 hours 21 minutes</div>
+                    <div class="arrow">↑</div>
+                </div>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" class="guess-header">Austin Texas</th>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>96</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>75</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>14 hours, 6 minutes</div>
+                    <div class="arrow">↑</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-warning">
+                <div class="top-box">
+                    <div>62</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-warning">
+                <div class="top-box">
+                    <div>43</div>
+                    <div class="arrow">↑</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-light">
+                <div class="top-box">
+                    <div>10 hours, 12 minutes</div>
+                    <div class="arrow">↓</div>
+                </div>
+            </td>
+          </tr>
+          
+          <tr>
+            <th scope="row" class="guess-header bg-success">Sanfransciso California</th>
+            <td class="guess-square grey-border-bottom bg-success">
+                <div class="top-box">
+                    <div>72</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-success">
+                <div class="top-box">
+                    <div>58</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-success">
+                <div class="top-box">
+                    <div>14 hours, 47 minutes</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-success">
+                <div class="top-box">
+                    <div>57</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-success">
+                <div class="top-box">
+                    <div>46</div>
+                </div>
+            </td>
+            <td class="guess-square grey-border-bottom bg-success">
+                <div class="top-box">
+                    <div>9 hours, 33 minutes</div>
+                </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 </div>
 
 <%- include ('../partials/footer') %>
