@@ -55,7 +55,7 @@ const user = {
 
 app.set('view engine', 'ejs'); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
-app.use(express.static('resources'))
+app.use(express.static('resources'));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -138,12 +138,16 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/login');
+      res.redirect('/discover');
     }
   })
   .catch(error => {
     res.redirect('/register');
   });
+});
+
+app.get("/discover", (req, res) => {
+  res.render('pages/discover');
 });
 
 app.post('/apitest', async(req,res) => {
@@ -178,6 +182,16 @@ app.post('/apitest', async(req,res) => {
     });
 });
 
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error(err);
+      res.json({ success: false });
+    } else {
+      res.json({ success: true });
+    }
+  });
+});
 
 // Authentication Middleware.
 const auth = (req, res, next) => {
