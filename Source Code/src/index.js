@@ -91,6 +91,15 @@ app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
+app.get('/input_test', (req,res) => {
+  res.render('pages/input_test');
+});
+
+app.post('/submit', (req,res) => {
+  console.log(req.body);
+  res.redirect('/input_test');
+});
+
 // Register
 app.post('/register', async (req, res) => {
   //hash the password using bcrypt library
