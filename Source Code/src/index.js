@@ -220,14 +220,19 @@ for(let i=1; i< stateCapitals.length;i++){
          day.sunset
         ]);
         // Insert data into database
-        console.log(formattedData); 
-      const query = "INSERT INTO weather_data (city, sta, dat, high_temp, low_temp, sunrise, sunset) VALUES ?";
-      db.query(query, [formattedData], (error, results, fields) => {
-        if (error) throw error;
+        console.log(formattedData);  //high_temp, low_temp, sunrise, sunset
+      const query = 'INSERT INTO weather_data (city, sta, dat) VALUES ?';
+      db.any(query, [formattedData])
+      .then((data)=>{
         console.log(`Weather data for ${city}, ${state} inserted successfully!`);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-    })
-    .catch(error => console.log(error));
+      //   if (error) throw error;
+        
+      })
+      
   }
 
 }); 
