@@ -69,7 +69,6 @@ app.use(
     extended: true,
   })
 );
-
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
