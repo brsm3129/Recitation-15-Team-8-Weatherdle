@@ -20,7 +20,42 @@
                 </a>  
                   <!--Change api call when leader board made-->
             </li>
-            
+            <div class="nav-item me-1">
+              <button id="instructions-btn" type="button" class="btn btn-link btn-floating mx-1"> <img src= "img/instructions.png" style="width: 50px"/> </button>
+              <div id="instructions" class="modal">
+                <div class="modal-content">
+                  <button id="close" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                  <h3><strong>How To Play</strong></h3>
+                  <h5>Guess the city in 6 guesses</h5>
+                </div>
+              </div>
+              <script>
+                const instructionsBtn = document.getElementById("instructions-btn");
+                const instructionsClose = document.getElementById("close");
+                instructionsBtn.addEventListener("click", () => {
+                    document.getElementById("instructions").style.display = "block";
+                });
+
+                instructionsClose.addEventListener("click", () => {
+                    document.getElementById("instructions").style.display = "none";
+                });
+              </script>
+            </div>
+            <style>
+              .modal-content {
+                position: relative;
+                background-color: black;
+                color: white;
+                text-align: left;
+              }
+              #close {
+                position: absolute;
+                top: 0;
+                right: 0;
+                font-size: 15px;
+                margin: 10px;
+              }
+            </style>
           </ul>
           <div class="nav-item me-1">
             <!-- TO-DO: For Logout, add a <a> tag with an attribute href to call the '/logout API -->
