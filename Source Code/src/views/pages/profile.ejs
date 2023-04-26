@@ -1,0 +1,131 @@
+<%- include ('../partials/head') %>
+    <%- include ('../partials/menu') %>
+
+        <style>
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                border-bottom: 1px solid black"
+
+            }
+
+            th,
+            td {
+                text-align: left;
+                padding: 8px;
+            }
+
+            .center {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+
+        <table style="width: 90%" class="center">
+            <tr>
+                <td style="width: 15%">
+                    <!-- Left side-->
+                    <div style="text-align: center;"><img src="img/pfp2.png" width="100" height="100"
+                            class="rounded-circle"></div>
+                    <br>
+                    <h2>peba1207</h2>
+                    <!-- Button trigger modal -->
+                    <div style="text-align: center;">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                            Edit Profile
+                        </button>
+
+                <td style="border-bottom:1px solid black">
+                    <!-- Right side-->
+                    <table>
+                        <tr><br><br></tr>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">
+                                <h1 style="display: inline;">#38</h1>
+                                <h3 style="display: inline;"> Global</h3>
+                            </td>
+                            <td colspan="2" style="text-align: center;">
+                                <h1 style="display: inline;">#6</h1>
+                                <h3 style="display: inline;"> Among Friends</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <h2 style="text-align: center;">Total wins:</h2>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h4 style="text-align: center;">12</h4>
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <h2 style="text-align: center;">Current streak:</h2>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h4 style="text-align: center;">4</h4>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <h2 style="text-align: center;">Longest streak:</h2>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h4 style="text-align: center;">6</h4>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <h2 style="text-align: center;">Average guesses:</h2>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h4 style="text-align: center;">3.8</h4>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <!-- Win rate bar -->
+                        <tr>
+                            <td></td>
+                            <td colspan="2">
+                                <h3 style="text-align: center;">Win rate: 25%</h3>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" style="width: 25%"></div>
+                                    <div class="progress-bar bg-danger" style="width: 75%"></div>
+                                  </div>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <td>
+                            <br><br>
+                        </td>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <%- include ('../partials/footer') %>
