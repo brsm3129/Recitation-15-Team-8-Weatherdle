@@ -19,6 +19,8 @@ const axios = require('axios'); // To make HTTP requests from our server. We'll 
 const app = express();
 // using bodyParser to parse JSON in the request body into JS objects
 app.use(bodyParser.json());
+// allows use of resources
+app.use( express.static( "resources" ) );
 // Database connection details
 const dbConfig = {
   host: 'db',
@@ -41,12 +43,12 @@ db.connect()
   });
 
 const user = {
-    username: undefined,
-    password: undefined,
-    first_name: undefined,
-    last_name: undefined,
-    email: undefined,
-  };
+  username: undefined,
+  password: undefined,
+  first_name: undefined,
+  last_name: undefined,
+  email: undefined,
+};
 
 
 // ****************************************************
@@ -55,7 +57,7 @@ const user = {
 
 app.set('view engine', 'ejs'); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
-app.use(express.static('resources'))
+app.use(express.static('resources'));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -70,7 +72,7 @@ app.use(
   })
 );
 app.get('/welcome', (req, res) => {
-  res.json({status: 'success', message: 'Welcome!'});
+  res.json({ status: 'success', message: 'Welcome!' });
 });
 
 // ************************************************
@@ -79,10 +81,14 @@ app.get('/welcome', (req, res) => {
 
 // TODO - Include your API routes here
 app.get('/', (req, res) => {
-  res.redirect('/login'); //this will call the /anotherRoute route in the API
+  //check if first time
+    //if user has a session stored pull up their game
+    //if not pull up fresh page and instructions
+  //res.json({message:'first visit'})
+  res.redirect('/weatherdle'); 
 });
 
-app.get('/login', (req,res) => {
+app.get('/login', (req, res) => {
   res.render('pages/login');
 })
 
@@ -90,27 +96,54 @@ app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
-// Register
-app.post('/register', async (req, res) => {
-  //hash the password using bcrypt library
-
-  // To-DO: Insert username and hashed password into 'users' table
-  //hash the password using bcrypt library
-  const hash = await bcrypt.hash(req.body.password, 10);
-
-    // Insert username and hashed password into 'users' table
-  let query = db.query('INSERT INTO users (username, password) VALUES ($1, $2)', [req.body.username, hash])
-
-    // Redirect to GET /login route page after data has been inserted successfully.
-  .then (query => {
-    res.redirect('/login');
-  })
-  .catch (error => {
-    // If the insert fails, redirect to GET /register route.
-    res.render('pages/register', {message: "Error: Registration Failed", error:true});
+app.get('/leaderboard', (req, res) => {
+  //order by streak, then by average if the streak is the same
+  var query = "select * from userdata ORDER BY streak DESC, avgGuess ASC;";
+  var scope = req.query.scope;
+  var sort = req.query.sort;
+  console.log(sort);
+  if (sort == "avg"){
+      //order by average, then by streak if the average is the same
+    query = "select * from userdata ORDER BY avgGuess ASC, streak DESC;";
+  }
+  db.any(query)
+  
+  .then(users =>{
+    res.render('pages/leaderboard', {
+      users, 
+    });
   });
 });
+app.get('/weatherdle', (req,res) => {
+  res.render('pages/weatherdle');
+});
 
+app.post('/weatherdle', (req,res) => {
+  console.log(req.body);
+  res.render('pages/weatherdle')
+});
+
+
+  // Register
+  app.post('/register', async (req, res) => {
+    //hash the password using bcrypt library
+
+    // To-DO: Insert username and hashed password into 'users' table
+    //hash the password using bcrypt library
+    const hash = await bcrypt.hash(req.body.password, 10);
+
+    // Insert username and hashed password into 'users' table
+    let query = db.query('INSERT INTO users (username, password) VALUES ($1, $2)', [req.body.username, hash])
+
+      // Redirect to GET /login route page after data has been inserted successfully.
+      .then(query => {
+        res.redirect('/login');
+      })
+      .catch(error => {
+        // If the insert fails, redirect to GET /register route.
+        res.render('pages/register', { message: "Error: Registration Failed", error: true });
+      });
+  });
 
 app.post('/login', async(req,res)=>{
   // check if password from request matches with password in DB
@@ -125,7 +158,7 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/login');
+      res.redirect('/weatherdle');
     }
   })
   .catch(error => {
@@ -165,22 +198,89 @@ app.post('/apitest', async(req,res) => {
     });
 });
 
+app.get("/abc",async(req,res)=>{
 
-// Authentication Middleware.
-const auth = (req, res, next) => {
-  if (!req.session.user) {
-    // Default to login page.
-    return res.redirect('/login');
+  const stateCapitals = [
+    { state: 'Alabama', city: 'Montgomery' },
+    { state: 'Alaska', city: 'Juneau' },
+    { state: 'Arizona', city: 'Phoenix' },
+    // Add more state capitals as necessary
+  ];
+  const date= '2023-03-17'
+for(let i=1; i< stateCapitals.length;i++){  
+  const { state, city } = stateCapitals[i];
+  axios({
+    url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date}`,
+    method: 'GET',
+    dataType: 'json',
+    headers: {
+      'Accept-Encoding': 'application/json',
+    },
+    params: {
+      unitGroup: 'us',
+      include: 'obs',
+      key: process.env.API_KEY
+    }, 
+  })
+    .then(results => {
+      const data = results.data;
+      const { resolvedAddress, days } = data;
+ 
+      const formattedData = days.map(day => [
+         city,
+         state, 
+         day.datetime, 
+         day.tempmax, 
+         day.tempmin,
+         day.sunrise,  
+         day.sunset
+        ]);
+        // Insert data into database
+        console.log(formattedData);  //high_temp, low_temp, sunrise, sunset
+      const query = 'INSERT INTO weather_data (city, sta, dat) VALUES ?';
+      db.any(query, [formattedData])
+      .then((data)=>{
+        console.log(`Weather data for ${city}, ${state} inserted successfully!`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      //   if (error) throw error;
+        
+      })
+      
   }
-  next();
-};
+
+}); 
+
+
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error(err);
+      res.json({ success: false });
+    } else {
+      res.json({ success: true });
+    }
+  });
+});
+
+  // Authentication Middleware.
+  const auth = (req, res, next) => {
+    if (!req.session.user) {
+      // Default to login page.
+      return res.redirect('/login');
+    }
+    next();
+  };
+
 
 // Authentication Required
 app.use(auth);
 
-// *********************************
-// <!-- Section 5 : Start Server-->
-// *********************************
-// starting the server and keeping the connection open to listen for more requests
-module.exports = app.listen(3000);
-console.log('Server is listening on port 3000');
+  // *********************************
+  // <!-- Section 5 : Start Server-->
+  // *********************************
+  // starting the server and keeping the connection open to listen for more requests
+  module.exports = app.listen(3000);
+  console.log('Server is listening on port 3000');

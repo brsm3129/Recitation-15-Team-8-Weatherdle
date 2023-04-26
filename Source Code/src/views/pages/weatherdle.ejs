@@ -2,9 +2,286 @@
 <%- include ('../partials/menu') %>
 <%- include ('../partials/message') %>
 
+<!--Guesses Data should be a JSON array-->
+<% 
+var guesses_data = {
+    guesses: [
+        {
+        correct_guess: false,
+        city_name: 'Denver Colorado',
+        summer_hi: {
+            value: 88,
+            higher: false, // true means up arrow, false, down arrow
+            close: false, // within 5 degrees farenheight or 15 minutes
+            correct: false // is the guess exactly correct?
+        },
+        summer_lo: 
+        {
+            value: 62,
+            higher: false,
+            close: true,
+            correct: false
+        },
+        longest_day:
+        {
+            value: '14 hours 59 minutes',
+            higher: false,
+            close: true,
+            correct: false
+        },
+        winter_hi: 
+        {
+            value: '46',
+            higher: true,
+            close: false,
+            correct: false
+        },
+        winter_lo: 
+        {
+            value: 23,
+            higher: true,
+            close: false,
+            correct: false
+        },
+        shortest_day: 
+        {
+            value: '9 hours 21 minutes',
+            higher: true,
+            close: true,
+            correct: false
+        }
+    },
+    {
+        correct_guess: false,
+        city_name: 'Austin Texas',
+        summer_hi: 
+        {
+            value: 96,
+            higher: false,
+            close: false,
+            correct: false
+        },
+        summer_lo: 
+        {
+            value: 75,
+            higher: false,
+            close: true,
+            correct: false
+        },
+        longest_day: 
+        {
+            value: '10 hours 12 minutes',
+            higher: false,
+            close: false,
+            correct: false
+        },
+        winter_hi: 
+        {
+            value: 62,
+            higher: false,
+            close: true,
+            correct: false
+        },
+        winter_lo:
+        {
+            value: 43,
+            higher: true,
+            close: true,
+            correct: false
+        },
+        shortest_day:
+        {
+            value: '10 hours 12 minutes',
+            higher: false,
+            close: false,
+            correct: false
+        }
+    },
+    {
+        correct_guess: true,
+        city_name: 'San Fransisco California',
+        summer_hi: 
+        {
+            value: 72,
+            higher: false,
+            close: false,
+            correct: true
+        },
+        summer_lo: 
+        {
+            value: 58,
+            higher: false,
+            close: false,
+            correct: true
+        },
+        longest_day: 
+        {
+            value: '14 hours 47 minutes',
+            higher: false,
+            close: false,
+            correct: true
+        },
+        winter_hi: 
+        {
+            value: 57,
+            higher: false,
+            close: false,
+            correct: true
+        },
+        winter_lo:
+        {
+            value: 46,
+            higher: false,
+            close: false,
+            correct: true
+        },
+        shortest_day:
+        {
+            value: '9 hours 33 minutes',
+            higher: false,
+            close: false,
+            correct: true
+        }
+    }
+]}
 
-<div class="container">
-    <h1>Weatherdle</h1>
+%>
+<div class="container text-center align-items-center w-25" name="guesser">
+	<form class="mb-3" action="/weatherdle" method="post">
+		<div class="row mb-3">
+			<label for="city">City</label>
+			<textarea id="city" name="city" rows="1" cols="10"></textarea>
+		</div>
+		<div class="row mb-3">
+			<input type="submit" value="Submit">
+		</div>
+	</form>
+</div>
+<div class="container" name="table">
+	<h1>Weatherdle</h1>
+
+	<p>Guess <%- guesses_data.guesses.length%>/8</p>
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col" class="guess-header">City Name</th>
+				<th scope="col" class="guess-header">Summer Hi</th>
+				<th scope="col" class="guess-header">Summer Lo</th>
+				<th scope="col" class="guess-header">Longest Day</th>
+				<th scope="col" class="guess-header">Winter Hi</th>
+				<th scope="col" class="guess-header">Winter Lo</th>
+				<th scope="col" class="guess-header">Shortest Day</th>
+			</tr>
+		</thead>
+		<tbody>
+            <% for(var i = 0; i < guesses_data.guesses.length; i++) { %>
+                <%if(guesses_data.guesses[i].correct_guess) { %>
+                    <tr class="bg-success">
+                <%} else {%>
+                    <tr>
+                <% } %>
+                    <!-- -->
+                    <th scope="row" class="guess-header"><%- guesses_data.guesses[i].city_name%></th>
+                    <%if(guesses_data.guesses[i].summer_hi.close == true) { %>
+                        <td class="guess-square grey-border-bottom bg-warning">
+                    <% } else { %>
+                        <td class="guess-square grey-border-bottom">
+                    <% } %>
+                            <div class="top-box">
+                                <div><%- guesses_data.guesses[i].summer_hi.value%></div>
+                                <% if(guesses_data.guesses[i].summer_hi.correct == false) { %>
+                                    <% if(guesses_data.guesses[i].summer_hi.higher) { %>
+                                        <div class="arrow">↑</div>
+                                    <% } else { %>
+                                        <div class="arrow">↓</div>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </td>
+                    <%if(guesses_data.guesses[i].summer_lo.close == true) { %>
+                        <td class="guess-square grey-border-bottom bg-warning">
+                    <% } else { %>
+                        <td class="guess-square grey-border-bottom ">
+                    <% } %>
+                            <div class="top-box">
+                                <div><%- guesses_data.guesses[i].summer_lo.value%></div>
+                                <% if(guesses_data.guesses[i].summer_lo.correct == false) { %>
+                                    <% if(guesses_data.guesses[i].summer_lo.higher) { %>
+                                        <div class="arrow">↑</div>
+                                    <% } else { %>
+                                        <div class="arrow">↓</div>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </td>
+                    <%if(guesses_data.guesses[i].longest_day.close == true) { %>
+                        <td class="guess-square grey-border-bottom bg-warning">
+                    <% } else { %>
+                        <td class="guess-square grey-border-bottom ">
+                    <% } %>
+                            <div class="top-box">
+                                <div><%- guesses_data.guesses[i].longest_day.value%></div>
+                                <% if(guesses_data.guesses[i].longest_day.correct == false) { %>
+                                    <% if(guesses_data.guesses[i].longest_day.higher) { %>
+                                        <div class="arrow">↑</div>
+                                    <% } else { %>
+                                        <div class="arrow">↓</div>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </td>
+                    <%if(guesses_data.guesses[i].winter_hi.close == true) { %>
+                        <td class="guess-square grey-border-bottom bg-warning">
+                    <% } else { %>
+                        <td class="guess-square grey-border-bottom ">
+                    <% } %>
+                            <div class="top-box">
+                                <div><%- guesses_data.guesses[i].winter_hi.value%></div>
+                                <% if(guesses_data.guesses[i].winter_hi.correct == false) { %>
+                                    <% if(guesses_data.guesses[i].winter_hi.higher) { %>
+                                        <div class="arrow">↑</div>
+                                    <% } else { %>
+                                        <div class="arrow">↓</div>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </td>
+                    <%if(guesses_data.guesses[i].winter_lo.close == true) { %>
+                        <td class="guess-square grey-border-bottom bg-warning">
+                    <% } else { %>
+                        <td class="guess-square grey-border-bottom ">
+                    <% } %>
+                            <div class="top-box">
+                                <div><%- guesses_data.guesses[i].winter_lo.value%></div>
+                                <% if(guesses_data.guesses[i].winter_lo.correct == false) { %>
+                                    <% if(guesses_data.guesses[i].winter_lo.higher) { %>
+                                        <div class="arrow">↑</div>
+                                    <% } else { %>
+                                        <div class="arrow">↓</div>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </td>
+                    <%if(guesses_data.guesses[i].shortest_day.close == true) { %>
+                        <td class="guess-square grey-border-bottom bg-warning">
+                    <% } else { %>
+                        <td class="guess-square grey-border-bottom ">
+                    <% } %>
+                            <div class="top-box">
+                                <div><%- guesses_data.guesses[i].shortest_day.value%></div>
+                                <% if(guesses_data.guesses[i].shortest_day.correct == false) { %>
+                                    <% if(guesses_data.guesses[i].shortest_day.higher) { %>
+                                        <div class="arrow">↑</div>
+                                    <% } else { %>
+                                        <div class="arrow">↓</div>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </td>
+                </tr>
+            <%} %>
+		</tbody>
+	</table>
 </div>
 
 <%- include ('../partials/footer') %>
