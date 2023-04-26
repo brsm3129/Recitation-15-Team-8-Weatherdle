@@ -5,11 +5,11 @@
 <!--Guesses Data should be a JSON array-->
 <% 
 var guesses_data = {
-    guesses:
-    {
+    guesses: [
+        {
         correct_guess: false,
         city_name: 'Denver Colorado',
-        summer_hi:
+        summer_hi: {
             value: 88,
             higher: false, // true means up arrow, false, down arrow
             close: false, // within 5 degrees farenheight or 15 minutes
@@ -144,6 +144,7 @@ var guesses_data = {
         }
     }
 ]}
+
 %>
 <div class="container text-center align-items-center w-25" name="guesser">
 	<form class="mb-3" action="/weatherdle" method="post">
