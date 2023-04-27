@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /*background*/
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /*modal*/
+        .modal-content {
+            background-color: #ded9ff;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #2f52ff;
+            width: 80%;
+        }
+
+        /*Close button*/
+        .close {
+            color: #ffffff;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- opens the modal -->
+    <button id="instructionButton">Click here for instructions!</button>
+
+    <!-- modal -->
+    <div id="insurctionModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>This game is called Weatherdle! In this game you are given weather facts, including average tempreature, average clouds, and yearly percipitation for guessing a city by weather infromation. Upon each guess the user gives it is compared to the actual answer and the application outputs hints based on that guess. Once you have correctly guessed the city, you have won the game! Be sure to check the leaderboard afterwards to see some interesting statistics from your game.  </p>
+        </div>
+
+    </div>
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById("insurctionModal");
+
+        // button that opens the modal
+        var btn = document.getElementById("instructionButton");
+
+        //  element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When user clicks the button, open modal 
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
