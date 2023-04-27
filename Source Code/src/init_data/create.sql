@@ -25,5 +25,5 @@ CREATE TABLE userdata(
     totalGuesses INT,
     correctGuesses INT
     );
-INSERT INTO userdata (username, pfp, streak, avgGuess, totalGames) VALUES ('test1', 1, 3, 5, 4, 20, 4);
+INSERT INTO userdata (username, pfp, streak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ('test0', 1, 3, 5, 4, 20, 4);
 
