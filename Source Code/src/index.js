@@ -71,7 +71,6 @@ app.use(
     extended: true,
   })
 );
-
 app.get('/welcome', (req, res) => {
   res.json({ status: 'success', message: 'Welcome!' });
 });
@@ -97,15 +96,6 @@ app.get('/register', (req, res) => {
   res.render('pages/register');
 });
 
-app.get('/input_test', (req,res) => {
-  res.render('pages/input_test');
-});
-
-app.post('/submit', (req,res) => {
-  console.log(req.body);
-  res.redirect('/input_test');
-});
-
 app.get('/leaderboard', (req, res) => {
   //order by streak, then by average if the streak is the same
   var query = "select * from userdata ORDER BY streak DESC, avgGuess ASC;";
@@ -129,6 +119,7 @@ app.get('/weatherdle', (req,res) => {
 });
 
 app.post('/weatherdle', (req,res) => {
+  console.log(req.body);
   res.render('pages/weatherdle')
 });
 

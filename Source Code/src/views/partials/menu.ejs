@@ -20,7 +20,48 @@
                 </a>  
                   <!--Change api call when leader board made-->
             </li>
-            
+            <div class="nav-item me-1">
+              <button id="instructions-btn" type="button" class="btn btn-link btn-floating mx-1"> <img src= "img/instructions.png" style="width: 50px"/> </button>
+              <div id="instructions" class="modal">
+                <div class="modal-content">
+                  <button id="close" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                  <h3><strong>How To Play</strong></h3>
+                  <h5>Guess the city in 6 guesses</h5>
+                  <ul>
+                    <li>Each guess must be a valid city</li>
+                    <li>The color of the tiles will change to how close your guess was to the actual city</li>
+                  </ul>
+                  <br>
+                  <p>In any guess: 
+                    <ul>
+                      <li><span style="background-color:#013220">Green</span> indicates a match</li>
+                      <li><span style="background-color:rgb(109, 109, 0)">Yellow</span> indicates that the correct number is within 20 digits of the city you guessed</li>
+                      <li>An arrow will be shown indicating how high or low your number was compared to the correct city</li>
+                    </ul>
+                  </p>
+                  <p><strong>Example</strong></p>
+                  <img src="img/Example.png">
+                  <p>
+                    <ul>
+                      <li>Summer Lo, Longest Day, and Winter Lo, all have data that matches the correct city</li>
+                      <li>Winter Hi has data that is within 20 of the correct answer but is too high</li>
+                      <li>Summer Hi and Shortest Day have data that is not very close and is too high</li>
+                    </ul>
+                  </p>
+                </div>
+              </div>
+              <script>
+                const instructionsBtn = document.getElementById("instructions-btn");
+                const instructionsClose = document.getElementById("close");
+                instructionsBtn.addEventListener("click", () => {
+                    document.getElementById("instructions").style.display = "block";
+                });
+
+                instructionsClose.addEventListener("click", () => {
+                    document.getElementById("instructions").style.display = "none";
+                });
+              </script>
+            </div>
           </ul>
           <div class="nav-item me-1">
             <!-- TO-DO: For Logout, add a <a> tag with an attribute href to call the '/logout API -->
