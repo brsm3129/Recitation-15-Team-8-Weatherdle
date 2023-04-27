@@ -14,3 +14,9 @@
     padding-left: 2.5rem; 
     padding-right: 2.5rem;
 }
+
+#Weatherdle{
+    position: absolute;
+    margin-left: 560px;
+    font-size: xx-large;
+}
