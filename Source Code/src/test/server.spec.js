@@ -48,27 +48,27 @@ describe('Server!', () => {
         done();
       });
   });
+//checking register 
+  it('Positive: /register', done => {
+     chai
+      .request(server)
+       .post('/register')
+       .send({username: 'test12', password: 'password123'})
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
 
-//   it('Positive: /apitest', done => {
-//     chai
-//       .request(server)
-//       .post('/apitest')
-//       .send({contentType:'json'})
-//       .end((err, res) => {
-//         assert.strictEqual(res.body.message, 'Denver, CO, United States');
-//         done();
-//       });
-//   });
+       });
+   });
 
-//   it('Negative: /apitest invalid api key', done => {
-//     chai
-//     .request(server)
-//     .post('/apitest')
-//     .send({contentType:'csv'})
-//     .end((err, res) => {
-//       expect(res).to.have.status(400);
-//       expect(res.body.error).to.equals('API Key was not valid');
-//       done();
-//     });
-//   });
+   it('Negative: /register missing password', done => {
+     chai
+      .request(server)
+      .post('/register')
+      .send({username: '20', password: ''})
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+   }); 
 });
