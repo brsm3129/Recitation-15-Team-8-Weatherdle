@@ -96,13 +96,32 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
+app.get('/profile', (req, res) => {
+  var username = req.query.username;
+  var query = `select * from userdata WHERE username = '${username}';`
+  if(!username){
+    if (!req.session.user) {
+      res.redirect('pages/weatherdle');
+    } else {
+      username = req.session.user;
+    }
+  }
+  //console.log(query);
+  db.any(query).then(user =>{
+    console.log(user)
+    res.render('pages/profile', {
+      user,
+    });
+  });
+
+});
 
 app.get('/leaderboard', (req, res) => {
   //order by streak, then by average if the streak is the same
   var query = "select * from userdata ORDER BY streak DESC, avgGuess ASC;";
   var scope = req.query.scope;
   var sort = req.query.sort;
-  console.log(sort);
+  //console.log(sort);
   if (sort == "avg"){
       //order by average, then by streak if the average is the same
     query = "select * from userdata ORDER BY avgGuess ASC, streak DESC;";
