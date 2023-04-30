@@ -206,11 +206,12 @@ app.get("/abc",async(req,res)=>{
     { state: 'Arizona', city: 'Phoenix'},
     // Add more state capitals as necessary
   ];
-  const date= '2023-03-17'
+  const date1= '2022-06-01';
+  const date2= '2022-06-15'
 for(let i=1; i< stateCapitals.length;i++){  
   const { state, city } = stateCapitals[i];
   axios({
-    url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date}`,
+    url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date1}/${date2}`,
     method: 'GET',
     dataType: 'json',
     headers: {
