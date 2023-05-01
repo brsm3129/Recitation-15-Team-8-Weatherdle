@@ -1,0 +1,17 @@
+.modal-content {
+    position: relative;
+    background-color: black;
+    color: white;
+    text-align: left;
+    position: absolute;
+    margin-left: 650px;
+    margin-top: 100px;
+  }
+ 
+#close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 15px;
+    margin: 10px;
+  }

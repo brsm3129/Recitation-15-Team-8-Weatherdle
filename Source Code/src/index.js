@@ -71,7 +71,6 @@ app.use(
     extended: true,
   })
 );
-
 app.get('/welcome', (req, res) => {
   res.json({ status: 'success', message: 'Welcome!' });
 });
@@ -96,13 +95,57 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
+app.get('/profile', (req, res) => {
+  var username = req.query.username;
+  //Userdata query
+  var query = `select * from userdata WHERE username = '${username}';`
+  //User ranking query
+  var query2 = `select t.Rank from (select ROW_NUMBER() OVER(ORDER BY streak DESC) AS Rank, username FROM userdata) t where t.username = '${username}'`;
+  var query3 = `select t.Rank from (select ROW_NUMBER() OVER(ORDER BY avgGuess ASC) AS Rank, username FROM userdata) t where t.username = '${username}'`;
+
+  if(!username){
+    console.log("COOLIO");
+    if (!req.session.user.username) {
+      res.redirect('pages/weatherdle');
+    } else {
+      username = req.session.user.username;
+    }
+  }
+  console.log(username);
+  //console.log(query);
+  db.task('get-everything', task => {
+    return task.batch([task.any(query), task.any(query2), task.any(query3)]);
+  })
+    // if query execution succeeds
+    // query results can be obtained
+    // as shown below
+    .then(data => {
+      res.render('pages/profile', {
+        user: data[0][0],
+        rank: [data[1][0].rank, data[2][0].rank],
+      });
+    })
+    // if query execution fails
+    // send error message
+    .catch(err => {
+      console.log('Uh Oh spaghettio');
+      console.log(err);
+      res.status('400').json({
+        current_user: '',
+        city_users: '',
+        error: err,
+      });
+    });
+  
+
+});
 
 app.get('/leaderboard', (req, res) => {
   //order by streak, then by average if the streak is the same
   var query = "select * from userdata ORDER BY streak DESC, avgGuess ASC;";
   var scope = req.query.scope;
   var sort = req.query.sort;
-  console.log(sort);
+  //console.log(sort);
   if (sort == "avg"){
       //order by average, then by streak if the average is the same
     query = "select * from userdata ORDER BY avgGuess ASC, streak DESC;";
@@ -120,12 +163,8 @@ app.get('/weatherdle', (req,res) => {
 });
 
 app.post('/weatherdle', (req,res) => {
+  console.log(req.body);
   res.render('pages/weatherdle')
-});
-
-// Register
-app.post('/register', async (req, res) => {
-  //hash the password using bcrypt library
 });
 
 
@@ -150,26 +189,6 @@ app.post('/register', async (req, res) => {
       });
   });
 
-
-  app.post('/login', async (req, res) => {
-    // check if password from request matches with password in DB
-    db.query("SELECT password FROM users WHERE username = ($1);", [req.body.username])
-      .then(async query => {
-        const passwordMatch = await bcrypt.compare(req.body.password, query[0].password);
-        user.username = req.body.username;
-        if (!user || !passwordMatch) {
-          res.render('pages/login', { message: "Incorrect username or password", error: true });
-        }
-        else {
-          req.session.user = user;
-          req.session.save();
-          res.redirect('/discover');
-        }
-      })
-      .catch(error => {
-        res.redirect('/register');
-      });
-    });
 app.post('/login', async(req,res)=>{
   // check if password from request matches with password in DB
 
@@ -183,15 +202,12 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/discover');
+      res.redirect('/weatherdle');
     }
   })
   .catch(error => {
     res.redirect('/register');
   });
-});
-app.get("/discover", (req, res) => {
-  res.render('pages/discover');
 });
 
 app.post('/apitest', async(req,res) => {
@@ -225,6 +241,62 @@ app.post('/apitest', async(req,res) => {
       });
     });
 });
+
+app.get("/abc",async(req,res)=>{
+
+  const stateCapitals = [
+    { state: 'Alabama', city: 'Montgomery' },
+    { state: 'Alaska', city: 'Juneau' },
+    { state: 'Arizona', city: 'Phoenix' },
+    // Add more state capitals as necessary
+  ];
+  const date= '2023-03-17'
+for(let i=1; i< stateCapitals.length;i++){  
+  const { state, city } = stateCapitals[i];
+  axios({
+    url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date}`,
+    method: 'GET',
+    dataType: 'json',
+    headers: {
+      'Accept-Encoding': 'application/json',
+    },
+    params: {
+      unitGroup: 'us',
+      include: 'obs',
+      key: process.env.API_KEY
+    }, 
+  })
+    .then(results => {
+      const data = results.data;
+      const { resolvedAddress, days } = data;
+ 
+      const formattedData = days.map(day => [
+         city,
+         state, 
+         day.datetime, 
+         day.tempmax, 
+         day.tempmin,
+         day.sunrise,  
+         day.sunset
+        ]);
+        // Insert data into database
+        console.log(formattedData);  //high_temp, low_temp, sunrise, sunset
+      const query = 'INSERT INTO weather_data (city, sta, dat) VALUES ?';
+      db.any(query, [formattedData])
+      .then((data)=>{
+        console.log(`Weather data for ${city}, ${state} inserted successfully!`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      //   if (error) throw error;
+        
+      })
+      
+  }
+
+}); 
+
 
 app.post('/logout', (req, res) => {
   req.session.destroy(err => {

@@ -4,12 +4,26 @@ CREATE TABLE users(
     password CHAR(60) NOT NULL
 );
 
+DROP TABLE IF EXISTS weather_data CASCADE;
+CREATE TABLE weather_data(
+    city VARCHAR(50),
+    sta CHAR(60),
+    dat VARCHAR(50),
+    high_temp  FLOAT,
+    low_temp FLOAT, 
+    sunrise VARCHAR(50), 
+    sunset VARCHAR(50)
+);
+
 DROP TABLE IF EXISTS userdata CASCADE;
 CREATE TABLE userdata(
     username VARCHAR(50) PRIMARY KEY, 
     pfp INT,
     streak INT,
+    longestStreak INT,
     avgGuess real,
-    totalGames INT
+    totalGames INT,
+    totalGuesses INT,
+    correctGuesses INT
     );
-INSERT INTO userdata (username, pfp, streak, avgGuess, totalGames) VALUES ('test1', 1, 3, 5, 4);
+
