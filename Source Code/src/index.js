@@ -98,21 +98,46 @@ app.get('/register', (req, res) => {
 });
 app.get('/profile', (req, res) => {
   var username = req.query.username;
+  //Userdata query
   var query = `select * from userdata WHERE username = '${username}';`
+  //User ranking query
+  var query2 = `select t.Rank from (select ROW_NUMBER() OVER(ORDER BY streak DESC) AS Rank, username FROM userdata) t where t.username = '${username}'`;
+  var query3 = `select t.Rank from (select ROW_NUMBER() OVER(ORDER BY avgGuess ASC) AS Rank, username FROM userdata) t where t.username = '${username}'`;
+
   if(!username){
-    if (!req.session.user) {
+    console.log("COOLIO");
+    if (!req.session.user.username) {
       res.redirect('pages/weatherdle');
     } else {
-      username = req.session.user;
+      username = req.session.user.username;
     }
   }
+  console.log(username);
   //console.log(query);
-  db.any(query).then(user =>{
-    console.log(user)
-    res.render('pages/profile', {
-      user,
+  db.task('get-everything', task => {
+    return task.batch([task.any(query), task.any(query2), task.any(query3)]);
+  })
+    // if query execution succeeds
+    // query results can be obtained
+    // as shown below
+    .then(data => {
+      res.render('pages/profile', {
+        user: data[0][0],
+        rank: [data[1][0].rank, data[2][0].rank],
+      });
+    })
+    // if query execution fails
+    // send error message
+    .catch(err => {
+      console.log('Uh Oh spaghettio');
+      console.log(err);
+      res.status('400').json({
+        current_user: '',
+        city_users: '',
+        error: err,
+      });
     });
-  });
+  
 
 });
 

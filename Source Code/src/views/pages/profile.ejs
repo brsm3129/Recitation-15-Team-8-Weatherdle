@@ -1,6 +1,20 @@
 <%- include ('../partials/head') %>
     <%- include ('../partials/menu') %>
-
+        <%
+        var correctguesses = locals.user.correctguesses;
+        var streak = locals.user.streak;
+        var longestStreak =  locals.user.longeststreak;
+        var avgguess =  locals.user.avgguess;
+        var totalgames = locals.user.totalgames;
+        var losses = totalgames - correctguesses;
+        var winRate = Math.floor( (correctguesses/totalgames)*100 );
+        var lossRate = 100-winRate;
+        var streakRanking = locals.rank[0];
+        var avgRanking = locals.rank[1];
+        var percent = 1;
+        var pfp = locals.user.pfp;
+        var username = locals.user.username;
+        %>
         <style>
             table {
                 border-collapse: collapse;
@@ -8,7 +22,9 @@
                 border-bottom: 1px solid black"
 
             }
-
+            h1{
+                font-size:50px
+            }
             th,
             td {
                 text-align: left;
@@ -26,18 +42,17 @@
                     <!-- Left side-->
                     <div style="text-align: center; background-color: lightgray; width: 110px; height: 110px; margin-left: auto; margin-right: auto;" class="rounded-circle" vertical-align: middle>
                         <span style="display: inline-block; height: 100%; vertical-align: middle; "></span>
-                        <img src="img/pfp<%- locals.user[0].pfp %>.png" width="100" height="100">
+                        <img src="img/pfp<%- pfp %>.png" width="100" height="100" class="rounded-circle">
                         <span style="display: inline-block; height: 100%; vertical-align: middle; "></span>
-
                     </div>
                     <br>
-                    <h2 style="text-align: center;"><%- locals.user[0].username %></h2>
+                    <h2 style="text-align: center;"><%- username %></h2>
                     <!-- Button trigger modal -->
-                    <div style="text-align: center;">
+                    <!--<div style="text-align: center;">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                             data-bs-target="#exampleModal">
                             Edit Profile
-                        </button>
+                        </button> -->
 
                 <td style="border-bottom:1px solid black">
                     <!-- Right side-->
@@ -45,12 +60,12 @@
                         <tr><br><br></tr>
                         <tr>
                             <td colspan="2" style="text-align: center;">
-                                <h1 style="display: inline;">#38</h1>
-                                <h3 style="display: inline;"> Global</h3>
+                                <h1>#<%- streakRanking %></h1>
+                                <h4>In streaks</h4>
                             </td>
                             <td colspan="2" style="text-align: center;">
-                                <h1 style="display: inline;">6</h1>
-                                <h3 style="display: inline;"> Puzzles Solved</h3>
+                                <h1> #<%- avgRanking %> </h1>
+                                <h4 >In average guesses</h4>
                             </td>
                         </tr>
                         <tr>
@@ -63,7 +78,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <h4 style="text-align: center;">12</h4>
+                                            <h4 style="text-align: center;"><%- correctguesses %></h4>
                                         </td>
                                     </tr>
                                 </table>
@@ -78,7 +93,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <h4 style="text-align: center;"><%- locals.user[0].streak %></h4>
+                                            <h4 style="text-align: center;"> <%- streak %></h4>
                                         </td>
                                     </tr>
                                 </table>
@@ -92,7 +107,8 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <h4 style="text-align: center;">6</h4>
+                                            <!--TODO: Fix this-->
+                                            <h4 style="text-align: center;"><%- longestStreak %></h4>
                                         </td>
                                     </tr>
                                 </table>
@@ -106,7 +122,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <h4 style="text-align: center;"><%- locals.user[0].avgguess %></h4>
+                                            <h4 style="text-align: center;"><%- avgguess %></h4>
                                         </td>
                                     </tr>
                                 </table>
@@ -116,11 +132,11 @@
                         <tr>
                             <td></td>
                             <td colspan="2">
-                                <h3 style="text-align: center;">Win rate: 25%</h3>
-                                <h5 style="text-align: center;">Out of <%- locals.user[0].totalgames %> total games</h5>
+                                <h3 style="text-align: center;">Win rate: <%- winRate %>%</h3>
+                                <h5 style="text-align: center;">Out of <%- totalgames %> total games</h5>
                                 <div class="progress">
-                                    <div class="progress-bar bg-success" style="width: 25%"></div>
-                                    <div class="progress-bar bg-danger" style="width: 75%"></div>
+                                    <div class="progress-bar bg-success" style="width: <%- winRate %>%"></div>
+                                    <div class="progress-bar bg-danger" style="width: <%- lossRate %>%"></div>
                                 </div>
                             </td>
                             <td></td>
@@ -128,10 +144,10 @@
                         <tr>
                             <td></td>
                             <td>
-                                <h6><%- locals.user[0].totalgames %> Wins</h6>
+                                <h6><%- correctguesses %> Wins</h6>
                             </td>
                             <td>
-                                <h6 style="text-align: right;"><%- locals.user[0].totalgames %> Losses</h6>
+                                <h6 style="text-align: right;"><%- losses %> Losses</h6>
                             </td>
                             <td></td>
                         </tr>
