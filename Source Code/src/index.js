@@ -201,12 +201,13 @@ app.get('/leaderboard', (req, res) => {
 
 app.get('/weatherdle', (req,res) => {
   res.render('pages/weatherdle');
-  // if(req.session.user != undefined){
-  //   db.query('SELECT * FROM guesses', (err, results) => {
-  //     if (err) throw err;
-  //     res.render('pages/weatherdle', { guesses: results });
-  //   });
-  // }
+  if(req.session.user != undefined){
+    console.log('User has an active session');
+    db.query('SELECT * FROM guesses', (err, results) => {
+      if (err) throw err;
+      res.render('pages/weatherdle', { guesses: results });
+    });
+  }
 });
 
 app.post('/weatherdle', (req,res) => {
@@ -479,14 +480,8 @@ for(let i=0; i< stateCapitals.length;i++){
 
 
 app.post('/logout', (req, res) => {
-  req.session.destroy(err => {
-    if (err) {
-      console.error(err);
-      res.json({ success: false });
-    } else {
-      res.json({ success: true });
-    }
-  });
+  req.session = null;
+  res.json({ success: true });
 });
 
   // Authentication Middleware.
