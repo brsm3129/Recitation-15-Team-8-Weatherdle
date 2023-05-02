@@ -37,6 +37,7 @@
                 .center {
                     margin-left: auto;
                     margin-right: auto;
+                    
                 }
 
                 .modal-backdrop {
@@ -48,7 +49,7 @@
 
             <table style="width: 90%" class="center">
                 <tr>
-                    <td style="width: 15%">
+                    <td style="width: 15%" class="center">
                         <!-- Left side-->
                         <div style="text-align: center; background-color: lightgray; width: 110px; height: 110px; margin-left: auto; margin-right: auto;"
                             class="rounded-circle" vertical-align: middle>
@@ -59,70 +60,54 @@
                         <br>
                         <!-- Button trigger modal -->
                         <% if(isUser){ %>
+                            <div style="text-align: center;  margin-left: auto; margin-right: auto;">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                            data-bs-target="#exampleModal" >
                             Change Picture
                         </button>
+                    </div>
                         <% } %>
                         <!-- Modal -->
                         <div class="modal" tabindex="-1" id="exampleModal">
                             <div class="modal-dialog"
                                 style="margin-left: auto; margin-right: auto;    transform: translate(0, -50%);   ">
                                 <div class="modal-content"
-                                    style="margin-left: auto; margin-right: auto;    transform: translate(0, -50%);   ">
+                                    style="margin-left: auto; margin-right: auto;    transform: translate(0, 0%);   ">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Change picture</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body">
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    <button class="btn btn-outline-light" id="button1"
-                                                        onclick="disable(1)">
-                                                        <div style="text-align: center; background-color: lightgray; width: 80px; height: 80px; margin-left: auto; margin-right: auto;"
-                                                            class="rounded-circle" vertical-align: middle>
-                                                            <span
-                                                                style="display: inline-block; height: 100%; vertical-align: middle; "></span>
-                                                            <img src="img/pfp1.png" width="70" height="70"
-                                                                class="rounded-circle">
-                                                            <span
-                                                                style="display: inline-block; height: 100%; vertical-align: middle; "></span>
-                                                        </div>
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-outline-light" id="button2" onclick="disable(2)">
-                                                        <div style="text-align: center; background-color: lightgray; width: 80px; height: 80px; margin-left: auto; margin-right: auto;"
-                                                            class="rounded-circle" vertical-align: middle>
-                                                            <span
-                                                                style="display: inline-block; height: 100%; vertical-align: middle; "></span>
-                                                            <img src="img/pfp2.png" width="70" height="70"
-                                                                class="rounded-circle">
-                                                            <span
-                                                                style="display: inline-block; height: 100%; vertical-align: middle; "></span>
-                                                        </div>
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-outline-light" id="button3" onclick="disable(3)">
-                                                        <div style="text-align: center; background-color: lightgray; width: 80px; height: 80px; margin-left: auto; margin-right: auto;"
-                                                            class="rounded-circle" vertical-align: middle>
-                                                            <span
-                                                                style="display: inline-block; height: 100%; vertical-align: middle; "></span>
-                                                            <img src="img/pfp3.png" width="70" height="70"
-                                                                class="rounded-circle">
-                                                            <span
-                                                                style="display: inline-block; height: 100%; vertical-align: middle; "></span>
-                                                        </div>
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                    <div class="modal-body" style="padding: 0;">
+                                        <table style="width: 90%">
+                                                <!-- Iterate through each image and display in modal -->
+                                                <%
+                                                var grid = "";
+                                                for(let i = 0; i<3; i++){
+                                                    grid = "<tr>" + grid;
+                                                    for(let j = 1; j<=3; j++){
+                                                        grid = grid + `<td>
+                                                            <button class="btn btn-outline-light" id="button` + (j+(3*i)) +`"
+                                                                onclick="disable(` + (j+(3*i)) +`)">
+                                                                <div style="text-align: center; background-color: lightgray; width: 80px; height: 80px; margin-left: auto; margin-right: auto;"
+                                                                    class="rounded-circle" vertical-align: middle>
+                                                                    <span
+                                                                        style="display: inline-block; height: 100%; vertical-align: middle; "></span>
+                                                                    <img src="img/pfp` + (j + (3*i)) + `.png" width="70" height="70"
+                                                                        class="rounded-circle">
+                                                                    <span
+                                                                        style="display: inline-block; height: 100%; vertical-align: middle; "></span>
+                                                                </div>
+                                                            </button>
+                                                        </td>`
+                                                    }
+                                                    grid = grid + "</tr>"
+                                                } %>
+                                                <%- grid %>
                                             <script>
                                                 var selected = <%- pfp %>;
                                                 const disable = (id) => {
-                                                    for(let i = 1; i<=3; i++){
+                                                    for(let i = 1; i<=9; i++){
                                                         document.querySelector(`#button${i}`).disabled = false;
                                                     }
                                                     document.querySelector(`#button${id}`).disabled = true;
