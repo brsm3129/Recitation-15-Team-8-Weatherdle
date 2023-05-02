@@ -278,7 +278,7 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/weatherdle');
+      res.redirect('/datafetching');
     }
   })
   .catch(error => {
@@ -318,7 +318,26 @@ app.post('/apitest', async(req,res) => {
     });
 });
 
-app.get("/abc",async(req,res)=>{
+app.get("/datafetching",async(req,res)=>{
+
+
+// FOR APPLICATION 
+
+  // const stateCapitals = [
+  //   { state: 'Colorado', city: 'Denver'},
+  //   { state: 'Alaska', city: 'Juneau'},
+  //   { state: 'Arizona', city: 'Phoenix'},
+  //   { state: 'Texas', city: 'Austin'},
+  //   { state: 'California', city:'San Fransisco'},
+  //   { state: 'New York ', city:'New York City'},
+  //   { state: 'Florida', city:'Maimi'},
+  //   { state: 'Illinois', city:'Chicago'},
+  //   {state: 'Massachusetts', city: 'Boston'}
+  //   // Add more state capitals as necessary
+  // ];
+
+
+  //FOR TESTING
 
   const stateCapitals = [
     { state: 'Colorado', city: 'Denver'},
@@ -452,7 +471,7 @@ for(let i=0; i< stateCapitals.length;i++){
       });
     });
   }
-
+  res.redirect('/weatherdle');
 }); 
 
 
