@@ -7,12 +7,14 @@ CREATE TABLE users(
 DROP TABLE IF EXISTS weather_data CASCADE;
 CREATE TABLE weather_data(
     city VARCHAR(50),
-    sta CHAR(60),
-    dat VARCHAR(50),
-    high_temp  FLOAT,
-    low_temp FLOAT, 
-    sunrise VARCHAR(50), 
-    sunset VARCHAR(50)
+    state CHAR(60),
+    date VARCHAR(50),
+    summer_high  FLOAT,
+    summer_low FLOAT, 
+    summer_longest_day FLOAT,
+    winter_high FLOAT,
+    winter_low FLOAT,
+    winter_longest_day FLOAT
 );
 
 DROP TABLE IF EXISTS userdata CASCADE;
