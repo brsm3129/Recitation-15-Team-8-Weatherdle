@@ -198,15 +198,51 @@ app.get('/leaderboard', (req, res) => {
     });
   });
 });
+
 app.get('/weatherdle', (req,res) => {
   res.render('pages/weatherdle');
+  // if(req.session.user != undefined){
+  //   db.query('SELECT * FROM guesses', (err, results) => {
+  //     if (err) throw err;
+  //     res.render('pages/weatherdle', { guesses: results });
+  //   });
+  // }
 });
 
 app.post('/weatherdle', (req,res) => {
-  console.log(req.body);
-  res.render('pages/weatherdle')
+  const username = req.session.user;
+  const guess = req.body.city;
+  
+  // Find the first available Guess column for the given user
+  let insertColumn = '';
+  for (let i = 1; i <= 8; i++) {
+    const checkQuery = `SELECT Guess${i} FROM guesses WHERE username='${username}'`;
+    db.query(checkQuery, (err, result) => {
+      if (err) {
+        // Handle the error
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+      } else {
+        // Check if the Guess column is empty
+        if (result.rows[0][`guess${i}`] === null) {
+          insertColumn = `Guess${i}`;
+          // Insert the guess into the first available Guess column for the given user
+          const insertQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
+          db.query(insertQuery, (err, result) => {
+            if (err) {
+              // Handle the error
+              console.log(err);
+              res.status(500).send('Internal Server Error');
+            } else {
+              // Send the response
+              console.log('Guess inserted successfully!');
+            }
+          });
+        }
+      }
+    });
+  }
 });
-
 
   // Register
   app.post('/register', async (req, res) => {
