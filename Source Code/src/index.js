@@ -253,9 +253,12 @@ app.post('/weatherdle', (req,res) => {
     const hash = await bcrypt.hash(req.body.password, 10);
 
     // Insert username and hashed password into 'users' table
-    let query = db.query('INSERT INTO users (username, password) VALUES ($1, $2)', [req.body.username, hash])
-
+    let query = db.query('INSERT INTO users (username, password) VALUES ($1, $2);', [req.body.username, hash]);
+    let query2 = db.query('INSERT INTO userdata (username, pfp, streak, longestStreak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ($1, 1, 0, 0, 0, 0, 0, 0);', [req.body.username]);
       // Redirect to GET /login route page after data has been inserted successfully.
+      db.task('get-everything', task => {
+        return task.batch([task.any(query), task.any(query2)]);
+      })
       .then(query => {
         res.redirect('/login');
       })
