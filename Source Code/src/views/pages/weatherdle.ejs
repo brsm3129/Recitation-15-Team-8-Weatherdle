@@ -144,13 +144,33 @@ var guesses_data = {
         }
     }
 ]}
-
+%>
+<!--Cities json, had to hardcode here cause couldn't figure out loading from a .json-->
+<%
+var city_names = {
+	cities: [
+	'Denver, Colorado',
+	'Austin, Texas',
+	'San Fransisco, California',
+	'Los Angeles, California',
+	'New York City, New York',
+	'Miami, Florida',
+	'Chicago, Illinois',
+	'Boston, Massachusetts',
+	'Atlanta, Georgia',
+	'Phoenix, Arizona'
+	]
+}
 %>
 <div class="container text-center align-items-center w-25" name="guesser">
 	<form class="mb-3" action="/weatherdle" method="post">
 		<div class="row mb-3">
 			<label for="city">City</label>
-			<textarea id="city" name="city" rows="1" cols="10"></textarea>
+			<select id="city" name="city">
+				<% for(var i = 0; i < city_names.cities.length; i++) { %>
+					<option value="<%-city_names.cities[i]%>"><%-city_names.cities[i]%></option>
+				<% } %>
+			</select>
 		</div>
 		<div class="row mb-3">
 			<input type="submit" value="Submit">
