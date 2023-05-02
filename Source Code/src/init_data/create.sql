@@ -9,10 +9,12 @@ CREATE TABLE weather_data(
     city VARCHAR(50),
     state CHAR(60),
     date VARCHAR(50),
-    high_temp  FLOAT,
-    low_temp FLOAT, 
-    sunrise VARCHAR(50), 
-    sunset VARCHAR(50)
+    summer_high  FLOAT,
+    summer_low FLOAT, 
+    summer_longest_day FLOAT,
+    winter_high FLOAT,
+    winter_low FLOAT,
+    winter_longest_day FLOAT
 );
 
 DROP TABLE IF EXISTS userdata CASCADE;
@@ -25,11 +27,7 @@ CREATE TABLE userdata(
     totalGuesses INT,
     correctGuesses INT
     );
-<<<<<<< HEAD
--- INSERT INTO userdata (username, pfp, streak, avgGuess, totalGames) VALUES ('test1', 1, 3, 5, 4, 20, 4);
-=======
 INSERT INTO userdata (username, pfp, streak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ('test0', 1, 3, 5, 4, 20, 4);
->>>>>>> main
 
 DROP TABLE IF EXISTS guesses CASCADE;
 CREATE TABLE guesses(

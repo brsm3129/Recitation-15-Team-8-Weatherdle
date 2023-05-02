@@ -237,15 +237,21 @@ app.post('/apitest', async(req,res) => {
 app.get("/abc",async(req,res)=>{
 
   const stateCapitals = [
-    { state: 'Alabama', city: 'Montgomery'},
+    { state: 'Colorado', city: 'Denver'},
     { state: 'Alaska', city: 'Juneau'},
     { state: 'Arizona', city: 'Phoenix'},
     // Add more state capitals as necessary
   ];
-  const date1= '2022-06-01';
-  const date2= '2022-06-15'
-for(let i=1; i< stateCapitals.length;i++){  
+  let date1= '2022-06-01';
+  let date2= '2022-06-15'
+for(let i=0; i< stateCapitals.length;i++){  
   const { state, city } = stateCapitals[i];
+
+  let smaxx=-1000;  let sminn=1000;  var slongestday=0;
+
+  let wmaxx=-1000; let wminn=1000; let wlongestday=0;
+
+  //for summer data
   axios({
     url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date1}/${date2}`,
     method: 'GET',
@@ -273,19 +279,94 @@ for(let i=1; i< stateCapitals.length;i++){
          day.sunset
         ]);
         // Insert data into database
-        console.log(formattedData);  //high_temp, low_temp, sunrise, sunset
-      const query = `INSERT INTO weather_data (city, state, date, high_temp, low_temp, sunrise, sunset) VALUES ${formattedData.map(data => `('${data.join("', '")}')`).join(', ')};`;
+        // console.log(formattedData);  //high_temp, low_temp, sunrise, sunset
+        for(let j=0; j<formattedData.length; j++){
+          const dateTimeString = formattedData[j][2]+'T'+formattedData[j][5];
+              const dateTimeString2=  formattedData[j][2]+'T'+formattedData[j][6];
+              let sunrise= new Date(dateTimeString);
+              let sunset= new Date(dateTimeString2);
+           daylength=sunset-sunrise
+
+          if(formattedData[j][4]<sminn){
+            sminn=formattedData[j][4];
+          }
+          if(formattedData[j][3]>smaxx){
+            smaxx=formattedData[j][3];
+          }
+          if(slongestday<daylength){
+            slongestday=daylength;
+          }
+        }
+       
+      //   if (error) throw error;
+        
+      
+      console.log(slongestday);
+       date1= '2022-12-01';
+       date2= '2022-12-15'
+      // // for winter data
+      axios({
+        url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date1}/${date2}`,
+        method: 'GET',
+        dataType: 'json',
+        headers: {
+          'Accept-Encoding': 'application/json',
+        },
+        params: {
+          unitGroup: 'us',
+          include: 'obs',
+          key: process.env.API_KEY
+        }, 
+      })
+        .then(results => {
+          const data = results.data;
+          const { resolvedAddress, days } = data;
+     
+          const formattedData = days.map(day => [
+             city,
+             state, 
+             day.datetime, 
+             day.tempmax, 
+             day.tempmin,
+             day.sunrise,  
+             day.sunset
+            ]);
+      //       // Insert data into database
+      //       // console.log(formattedData);  //high_temp, low_temp, sunrise, sunset
+            let wmaxx=-1000;
+            let wminn=1000;
+            let wlongestday=0;
+            for(let j=0; j<formattedData.length; j++){
+              const dateTimeString = formattedData[j][2]+'T'+formattedData[j][5];
+              const dateTimeString2=  formattedData[j][2]+'T'+formattedData[j][6];
+              let wsunrise= new Date(dateTimeString);
+              let wsunset= new Date(dateTimeString2);
+              let wdaylength=wsunset-wsunrise
+              if(formattedData[j][4]<wminn){
+                wminn=formattedData[j][4];
+              }
+              if(formattedData[j][3]>wmaxx){
+                wmaxx=formattedData[j][3];
+              }
+              if(wlongestday<wdaylength){
+                wlongestday=wdaylength;
+              }
+            }
+    
+          //   if (error) throw error;
+            
+          });
+
+      const query = `INSERT INTO weather_data (city, state, summer_high, summer_low, summer_longest_day , winter_high, winter_low,  winter_longest_day) VALUES('${formattedData[0][0]}', '${formattedData[0][1]}', ${smaxx}, ${sminn}, ${slongestday}, ${wmaxx}, ${wminn}, ${wlongestday});`
       db.any(query)
       .then((data)=>{
         console.log(`Weather data for ${city}, ${state} inserted successfully!`);
       })
       .catch((err) => {
+
         console.log(err);
       });
-      //   if (error) throw error;
-        
-      })
-      
+    });
   }
 
 }); 
