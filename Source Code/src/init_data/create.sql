@@ -6,8 +6,7 @@ CREATE TABLE users(
 
 DROP TABLE IF EXISTS weather_data CASCADE;
 CREATE TABLE weather_data(
-    city VARCHAR(50),
-    state CHAR(60),
+    location VARCHAR(50),
     date VARCHAR(50),
     summer_high  FLOAT,
     summer_low FLOAT, 
