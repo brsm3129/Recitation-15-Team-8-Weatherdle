@@ -7,3 +7,13 @@ INSERT INTO userdata (username, pfp, streak, longestStreak, avgGuess, totalGames
 INSERT INTO userdata (username, pfp, streak, longestStreak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ('test5', 2, 2, 30, 4, 45, 1, 38);
 INSERT INTO userdata (username, pfp, streak, longestStreak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ('test6', 1, 6, 20, 1.5, 65, 1, 57);
 INSERT INTO userdata (username, pfp, streak, longestStreak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ('test7', 1, 7, 15, 3, 75, 1, 38);
+
+INSERT INTO guesses (username, Guess1, Guess2, Guess3, Guess4, Guess5, Guess6, Guess7, Guess8) VALUES ('targetcity', 'Austin, Texas', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO guesses (username, Guess1, Guess2, Guess3, Guess4, Guess5, Guess6, Guess7, Guess8) VALUES ('brsm', 'Denver, Colorado', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
+    VALUES ('Austin, Texas', 96, 75, 14.1, 62, 43, 10.2);
+INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
+    VALUES ('Denver, Colorado', 88, 62, 15.0, 46, 23, 9.3);
+INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
+    VALUES ('San Fransisco, California', 72, 58, 14.8, 57, 46, 9.5);
