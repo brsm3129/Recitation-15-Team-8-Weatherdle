@@ -216,14 +216,14 @@ app.get('/weatherdle', (req,res) => {
     })
     .then(function (data) {
       //get weather data for each guess and the target city
-      const targetdataquery = `SELECT * FROM weather_data WHERE city = '${data[1][0].guess1}'`
+      const targetdataquery = `SELECT * FROM weather_data WHERE location = '${data[1][0].guess1}'`
       db.any(targetdataquery)
       .then(targetdata => {
         var tasks = [];
         console.log(data[0])
         if(data[0].length > 0) {
           for(var i = 1; i <= 8; i++) {
-            tasks.push(`SELECT * FROM weather_data WHERE city = '${data[0][0][`guess${i}`]}'`);
+            tasks.push(`SELECT * FROM weather_data WHERE location = '${data[0][0][`guess${i}`]}'`);
           }
           console.log(tasks);
           db.task(`get all guess data`, task => {
@@ -234,8 +234,8 @@ app.get('/weatherdle', (req,res) => {
             for(var i = 0; i < 8; i++) {
               console.log(guessdata[i])
               if(guessdata[i].length > 0) {
-                correct_guess = targetdata[0].city == guessdata[i][0].city;
-                city_name = guessdata[i][0].city;
+                correct_guess = targetdata[0].location == guessdata[i][0].location;
+                city_name = guessdata[i][0].location;
                 if(correct_guess) {
                   summer_hi = {
                     value : guessdata[i][0].summer_high,
