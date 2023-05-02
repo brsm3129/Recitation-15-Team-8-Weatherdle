@@ -199,15 +199,144 @@ app.get('/leaderboard', (req, res) => {
   });
 });
 
+//if user is not logged in, load an empty table
+//if user is logged in, retrieve guesses
 app.get('/weatherdle', (req,res) => {
-  res.render('pages/weatherdle');
-  if(req.session.user != undefined){
-    console.log('User has an active session');
-    db.query('SELECT * FROM guesses', (err, results) => {
-      if (err) throw err;
-      res.render('pages/weatherdle', { guesses: results });
-    });
+  var username;
+  if(req.session.user) {
+    username = req.session.user.username;
   }
+  console.log(username);
+  if(username != undefined) {
+    //get both the user's guesses and the target city data
+    const userguesses = `SELECT * FROM guesses WHERE username = '${username}'`;
+    const targetcity = `SELECT * FROM guesses WHERE username = 'targetcity'`;
+    db.task('get-everything', task => {
+      return task.batch([task.any(userguesses), task.any(targetcity)]);
+    })
+    .then(function (data) {
+      //get weather data for each guess and the target city
+      const targetdataquery = `SELECT * FROM weather_data WHERE city = '${data[1][0].guess1}'`
+      db.any(targetdataquery)
+      .then(targetdata => {
+        var tasks = [];
+        console.log(data[0])
+        if(data[0].length > 0) {
+          for(var i = 1; i <= 8; i++) {
+            tasks.push(`SELECT * FROM weather_data WHERE city = '${data[0][0][`guess${i}`]}'`);
+          }
+          console.log(tasks);
+          db.task(`get all guess data`, task => {
+            return task.batch([task.any(tasks[0]), task.any(tasks[1]), task.any(tasks[2]),task.any(tasks[3]),task.any(tasks[4]), task.any(tasks[5]),task.any(tasks[6]),task.any(tasks[7])]);
+          })
+          .then(function (guessdata) {
+            var guesses = [];
+            for(var i = 0; i < 8; i++) {
+              console.log(guessdata[i])
+              if(guessdata[i].length > 0) {
+                correct_guess = targetdata[0].city == guessdata[i][0].city;
+                city_name = guessdata[i][0].city;
+                if(correct_guess) {
+                  summer_hi = {
+                    value : guessdata[i][0].summer_high,
+                    higher: false,
+                    close: false,
+                    correct: true
+                  }
+                  summer_lo = {
+                    value : guessdata[i][0].summer_low,
+                    higher: false,
+                    close: false,
+                    correct: true
+                  }
+                  longest_day = {
+                    value : guessdata[i][0].summer_longest_day,
+                    higher: false,
+                    close: false,
+                    correct: true
+                  }
+                  winter_hi = {
+                    value : guessdata[i][0].winter_high,
+                    higher: false,
+                    close: false,
+                    correct: true
+                  }
+                  winter_lo = {
+                    value : guessdata[i][0].winter_low,
+                    higher: false,
+                    close: false,
+                    correct: true
+                  }
+                  shortest_day = {
+                    value : guessdata[i][0].winter_longest_day,
+                    higher: false,
+                    close: false,
+                    correct: true
+                  }
+                } else {
+                  summer_hi = {
+                    value : guessdata[i][0].summer_high,
+                    higher: (guessdata[i][0].summer_high > targetdata[0].summer_high),
+                    close: ((guessdata[i][0].summer_high - targetdata[0].summer_high) < 5),
+                    correct: false
+                  }
+                  summer_lo = {
+                    value : guessdata[i][0].summer_low,
+                    higher: (guessdata[i][0].summer_low > targetdata[0].summer_low),
+                    close: ((guessdata[i][0].summer_low - targetdata[0].summer_low) < 5),
+                    correct: false
+                  }
+                  longest_day = {
+                    value : guessdata[i][0].summer_longest_day,
+                    higher: (guessdata[i][0].summer_longest_day > targetdata[0].summer_longest_day),
+                    close: ((guessdata[i][0].summer_longest_day - targetdata[0].summer_longest_day) < .25),
+                    correct: false
+                  }
+                  winter_hi = {
+                    value : guessdata[i][0].winter_high,
+                    higher: (guessdata[i][0].winter_high > targetdata[0].winter_high),
+                    close: ((guessdata[i][0].winter_high - targetdata[0].winter_high) < 5),
+                    correct: false
+                  }
+                  winter_lo = {
+                    value : guessdata[i][0].winter_low,
+                    higher: (guessdata[i][0].winter_low > targetdata[0].winter_low),
+                    close: ((guessdata[i][0].winter_low - targetdata[0].winter_low) < 5),
+                    correct: false
+                  }
+                  shortest_day = {
+                    value : guessdata[i][0].winter_longest_day,
+                    higher: (guessdata[i][0].winter_longest_day > targetdata[0].winter_longest_day),
+                    close: ((guessdata[i][0].winter_longest_day - targetdata[0].winter_longest_day) < .25),
+                    correct: false
+                  }
+                }
+                guesses.push({
+                  correct_guess: correct_guess,
+                  city_name: city_name,
+                  summer_hi: summer_hi,
+                  summer_lo: summer_lo,
+                  longest_day: longest_day,
+                  winter_hi: winter_hi,
+                  winter_lo: winter_lo,
+                  shortest_day: shortest_day
+                });
+              }
+            }
+          });
+        } else {
+
+          res.locals.guesses = [];
+          res.render('pages/weatherdle', {guesses: []});
+        }
+      });
+        
+    })
+    } else {
+      res.locals.guesses = [];
+      res.locals.username = [];
+      res.render('pages/weatherdle');
+    }
 });
 
 app.post('/weatherdle', (req,res) => {
@@ -237,6 +366,7 @@ app.post('/weatherdle', (req,res) => {
             } else {
               // Send the response
               console.log('Guess inserted successfully!');
+              res.redirect('/weatherdle')
             }
           });
         }
@@ -282,7 +412,8 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      res.redirect('/datafetching');
+      //res.redirect('/datafetching');
+      res.redirect('/weatherdle')
     }
   })
   .catch(error => {
