@@ -20,12 +20,12 @@ CREATE TABLE userdata(
     username VARCHAR(50) PRIMARY KEY, 
     pfp INT,
     streak INT,
+    longestStreak INT,
     avgGuess real,
     totalGames INT,
     totalGuesses INT,
     correctGuesses INT
     );
-INSERT INTO userdata (username, pfp, streak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ('test0', 1, 3, 5, 4, 20, 4);
 
 DROP TABLE IF EXISTS guesses CASCADE;
 CREATE TABLE guesses(

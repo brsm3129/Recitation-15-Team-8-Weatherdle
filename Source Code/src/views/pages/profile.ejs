@@ -1,0 +1,244 @@
+<%- include ('../partials/head') %>
+    <%- include ('../partials/menu') %>
+        <% var correctguesses=locals.user.correctguesses; 
+        var streak=locals.user.streak; 
+        var longestStreak=locals.user.longeststreak; 
+        var avgguess=locals.user.avgguess; 
+        var totalgames=locals.user.totalgames; 
+        var losses=totalgames - correctguesses; 
+        var winRate=Math.floor((correctguesses/totalgames)*100 ); 
+        var lossRate=100-winRate; var streakRanking=locals.rank[0]; 
+        var avgRanking=locals.rank[1]; 
+        var percent=1; 
+        var pfp=locals.user.pfp; 
+        var username=locals.user.username; 
+        var isUser = locals.isUser;
+        %>
+
+
+            <style>
+                table {
+                    border-collapse: collapse;
+                    width: 100%;
+                    border-bottom: 1px solid black"
+
+                }
+
+                h1 {
+                    font-size: 50px
+                }
+
+                th,
+                td {
+                    text-align: left;
+                    padding: 8px;
+                }
+
+                .center {
+                    margin-left: auto;
+                    margin-right: auto;
+                    
+                }
+
+                .modal-backdrop {
+                    z-index: -1;
+                }
+            </style>
+
+
+
+            <table style="width: 90%" class="center">
+                <tr>
+                    <td style="width: 15%" class="center">
+                        <!-- Left side-->
+                        <div style="text-align: center; background-color: lightgray; width: 110px; height: 110px; margin-left: auto; margin-right: auto;"
+                            class="rounded-circle" vertical-align: middle>
+                            <span style="display: inline-block; height: 100%; vertical-align: middle; "></span>
+                            <img src="img/pfp<%- pfp %>.png" width="100" height="100" class="rounded-circle">
+                            <span style="display: inline-block; height: 100%; vertical-align: middle; "></span>
+                        </div>
+                        <br>
+                        <!-- Button trigger modal -->
+                        <% if(isUser){ %>
+                            <div style="text-align: center;  margin-left: auto; margin-right: auto;">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal" >
+                            Change Picture
+                        </button>
+                    </div>
+                        <% } %>
+                        <!-- Modal -->
+                        <div class="modal" tabindex="-1" id="exampleModal">
+                            <div class="modal-dialog"
+                                style="margin-left: auto; margin-right: auto;    transform: translate(0, -50%);   ">
+                                <div class="modal-content"
+                                    style="margin-left: auto; margin-right: auto;    transform: translate(0, 0%);   ">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Change picture</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body" style="padding: 0;">
+                                        <table style="width: 90%">
+                                                <!-- Iterate through each image and display in modal -->
+                                                <%
+                                                var grid = "";
+                                                for(let i = 0; i<3; i++){
+                                                    grid = "<tr>" + grid;
+                                                    for(let j = 1; j<=3; j++){
+                                                        grid = grid + `<td>
+                                                            <button class="btn btn-outline-light" id="button` + (j+(3*i)) +`"
+                                                                onclick="disable(` + (j+(3*i)) +`)">
+                                                                <div style="text-align: center; background-color: lightgray; width: 80px; height: 80px; margin-left: auto; margin-right: auto;"
+                                                                    class="rounded-circle" vertical-align: middle>
+                                                                    <span
+                                                                        style="display: inline-block; height: 100%; vertical-align: middle; "></span>
+                                                                    <img src="img/pfp` + (j + (3*i)) + `.png" width="70" height="70"
+                                                                        class="rounded-circle">
+                                                                    <span
+                                                                        style="display: inline-block; height: 100%; vertical-align: middle; "></span>
+                                                                </div>
+                                                            </button>
+                                                        </td>`
+                                                    }
+                                                    grid = grid + "</tr>"
+                                                } %>
+                                                <%- grid %>
+                                            <script>
+                                                var selected = <%- pfp %>;
+                                                const disable = (id) => {
+                                                    for(let i = 1; i<=9; i++){
+                                                        document.querySelector(`#button${i}`).disabled = false;
+                                                    }
+                                                    document.querySelector(`#button${id}`).disabled = true;
+                                                    console.log(selected);
+                                                    selected = id;
+                                                    document.getElementById('submitButton').setAttribute("value", id);
+                                                };
+                                            </script>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                            <form action="/profile/change" method="POST" >
+                                        <button type="submit" class="btn btn-primary" name="pfp" value="<%-pfp%>" id="submitButton">Save changes</button>
+                                    </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h2 style="text-align: center;"><%- username %></h2>
+                        <!-- Button trigger modal -->
+                        <!--<div style="text-align: center;">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                            Edit Profile
+                        </button> -->
+
+                    <td style="border-bottom:1px solid black">
+                        <!-- Right side-->
+                        <table>
+                            <tr><br><br></tr>
+                            <tr>
+                                <td colspan="2" style="text-align: center;">
+                                    <h1>#<%- streakRanking %></h1>
+                                    <h4>In streaks</h4>
+                                </td>
+                                <td colspan="2" style="text-align: center;">
+                                    <h1> #<%- avgRanking %> </h1>
+                                    <h4>In average guesses</h4>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <h2 style="text-align: center;">Total wins:</h2>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h4 style="text-align: center;"><%- correctguesses %></h4>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <h2 style="text-align: center;">Current streak:</h2>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h4 style="text-align: center;"> <%- streak %></h4>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <h2 style="text-align: center;">Longest streak:</h2>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <!--TODO: Fix this-->
+                                                <h4 style="text-align: center;"><%- longestStreak %></h4>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <h2 style="text-align: center;">Average guesses:</h2>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h4 style="text-align: center;"><%- avgguess %></h4>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- Win rate bar -->
+                            <tr>
+                                <td></td>
+                                <td colspan="2">
+                                    <h3 style="text-align: center;">Win rate: <%- winRate %>%</h3>
+                                    <h5 style="text-align: center;">Out of <%- totalgames %> total games</h5>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" style="width: <%- winRate %>%"></div>
+                                        <div class="progress-bar bg-danger" style="width: <%- lossRate %>%"></div>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <h6><%- correctguesses %> Wins</h6>
+                                </td>
+                                <td>
+                                    <h6 style="text-align: right;"><%- losses %> Losses</h6>
+                                </td>
+                                <td></td>
+                            </tr>
+
+                            <td>
+                                <br><br>
+                            </td>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <%- include ('../partials/footer') %>

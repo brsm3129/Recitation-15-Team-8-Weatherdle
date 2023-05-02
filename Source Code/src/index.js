@@ -95,13 +95,97 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
   res.render('pages/register');
 });
+app.get('/profile', (req, res) => {
+  var username = null;
+  var isUser = false;
+  if(!req.query.username){
+    if (!req.session.user) {
+      res.redirect('/weatherdle');
+    } else {
+      username = req.session.user.username;
+      isUser = true;
+    }
+  } else{
+    username = req.query.username
+  }
+  console.log(username);
+  console.log(query);
+
+    //Userdata query
+    var query = `select * from userdata WHERE username = '${username}';`
+    //User ranking query
+    var query2 = `select t.Rank from (select ROW_NUMBER() OVER(ORDER BY streak DESC) AS Rank, username FROM userdata) t where t.username = '${username}'`;
+    var query3 = `select t.Rank from (select ROW_NUMBER() OVER(ORDER BY avgGuess ASC) AS Rank, username FROM userdata) t where t.username = '${username}'`;
+  
+
+  if(username){
+  db.task('get-everything', task => {
+    return task.batch([task.any(query), task.any(query2), task.any(query3)]);
+  })
+    // if query execution succeeds
+    // query results can be obtained
+    // as shown below
+    .then(data => {
+      res.render('pages/profile', {
+        user: data[0][0],
+        rank: [data[1][0].rank, data[2][0].rank],
+        isUser
+      });
+    })
+    // if query execution fails
+    // send error message
+    .catch(err => {
+      console.log('Uh Oh spaghettio');
+      console.log(err);
+      res.status('400').json({
+        current_user: '',
+        city_users: '',
+        error: err,
+      });
+    });
+  }
+
+});
+app.get('/profile/change', (req,res) =>{
+  res.redirect('/profile');
+});
+app.post('/profile/change', (req,res) => {
+  var username = null;
+
+  if(!req.query.username){
+    if (!req.session.user) {
+      res.redirect('/weatherdle');
+    } else {
+      username = req.session.user.username;
+    }
+  } else{
+    username = req.query.username
+  }
+
+  var query = `UPDATE userdata SET pfp = $1 WHERE username = $2`;
+
+  db.any(query, [req.body.pfp, username])
+  // if query execution succeeds
+  // send success message
+  .then(function (data) {
+    console.log(query);
+    
+    res.redirect('/profile');
+    
+  })
+  // if query execution fails
+  // send error message
+  .catch(function (err) {
+    return console.log(err);
+  });
+});
 
 app.get('/leaderboard', (req, res) => {
   //order by streak, then by average if the streak is the same
   var query = "select * from userdata ORDER BY streak DESC, avgGuess ASC;";
   var scope = req.query.scope;
   var sort = req.query.sort;
-  console.log(sort);
+  //console.log(sort);
   if (sort == "avg"){
       //order by average, then by streak if the average is the same
     query = "select * from userdata ORDER BY avgGuess ASC, streak DESC;";
