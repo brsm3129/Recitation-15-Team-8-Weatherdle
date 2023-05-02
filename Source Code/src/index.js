@@ -594,8 +594,8 @@ for(let i=0; i< stateCapitals.length;i++){
           //   if (error) throw error;
             
           });
-
-      const query = `INSERT INTO weather_data (city, state, summer_high, summer_low, summer_longest_day , winter_high, winter_low,  winter_longest_day) VALUES('${formattedData[0][0]}', '${formattedData[0][1]}', ${smaxx}, ${sminn}, ${slongestday}, ${wmaxx}, ${wminn}, ${wlongestday});`
+          let sass= formattedData[0][0]+','+formattedData[0][1];
+      const query = `INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day , winter_high, winter_low,  winter_longest_day) VALUES('${sass}', ${smaxx}, ${sminn}, ${slongestday}, ${wmaxx}, ${wminn}, ${wlongestday});`
       db.any(query)
       .then((data)=>{
         console.log(`Weather data for ${city}, ${state} inserted successfully!`);
