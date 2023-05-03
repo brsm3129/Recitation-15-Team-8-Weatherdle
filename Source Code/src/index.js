@@ -205,6 +205,9 @@ app.get('/weatherdle', (req,res) => {
   var username;
   if(req.session.user) {
     username = req.session.user.username;
+  } 
+  else{
+    res.redirect('/login')
   }
   console.log(username);
   if(username != undefined) {
@@ -360,7 +363,7 @@ app.post('/weatherdle', async (req, res) => {
 
     // Insert the guess into the first available Guess column for the given user
     if (insertColumn !== '') {
-      // const insertQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
+      // const insertQueryf = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
       const insertQuery = await db.query(`INSERT INTO guesses (username, ${insertColumn}) VALUES ($1, $2);`,[username, guess]);
       // await db.query(insertQuery);
       console.log('Guess inserted successfully!');
