@@ -31,12 +31,12 @@ CREATE TABLE userdata(
 DROP TABLE IF EXISTS guesses CASCADE;
 CREATE TABLE guesses(
     username VARCHAR(50) PRIMARY KEY,
-    Guess1 VARCHAR(50),
-    Guess2 VARCHAR(50),
-    Guess3 VARCHAR(50),
-    Guess4 VARCHAR(50),
-    Guess5 VARCHAR(50),
-    Guess6 VARCHAR(50),
-    Guess7 VARCHAR(50),
-    Guess8 VARCHAR(50)
+    Guess1 VARCHAR(80),
+    Guess2 VARCHAR(80),
+    Guess3 VARCHAR(80),
+    Guess4 VARCHAR(80),
+    Guess5 VARCHAR(80),
+    Guess6 VARCHAR(80),
+    Guess7 VARCHAR(80),
+    Guess8 VARCHAR(80)
 );
