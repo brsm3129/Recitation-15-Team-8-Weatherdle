@@ -85,7 +85,7 @@ app.get('/', (req, res) => {
     //if user has a session stored pull up their game
     //if not pull up fresh page and instructions
   //res.json({message:'first visit'})
-  res.redirect('/weatherdle'); 
+  res.redirect('/login'); 
 });
 
 app.get('/login', (req, res) => {
@@ -342,39 +342,41 @@ app.get('/weatherdle', (req,res) => {
     }
 });
 
-app.post('/weatherdle', (req,res) => {
-  const username = req.session.user;
+app.post('/weatherdle', async (req, res) => {
+  const username = req.session.user.username;
   const guess = req.body.city;
-  
-  // Find the first available Guess column for the given user
-  let insertColumn = '';
-  for (let i = 1; i <= 8; i++) {
-    const checkQuery = `SELECT Guess${i} FROM guesses WHERE username='${username}'`;
-    db.query(checkQuery, (err, result) => {
-      if (err) {
-        // Handle the error
-        console.log(err);
-        res.status(500).send('Internal Server Error');
-      } else {
-        // Check if the Guess column is empty
-        if (result.rows[0][`guess${i}`] === null) {
-          insertColumn = `Guess${i}`;
-          // Insert the guess into the first available Guess column for the given user
-          const insertQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
-          db.query(insertQuery, (err, result) => {
-            if (err) {
-              // Handle the error
-              console.log(err);
-              res.status(500).send('Internal Server Error');
-            } else {
-              // Send the response
-              console.log('Guess inserted successfully!');
-              res.redirect('/weatherdle')
-            }
-          });
-        }
+
+  try {
+    // Find the first available Guess column for the given user
+    let insertColumn = '';
+    for (let i = 1; i <= 8; i++) {
+      const checkQuery = `SELECT Guess${i} FROM guesses WHERE username='${username}'`;
+      const result = await db.query(checkQuery);
+      if (result.length > 0 && result === null) {
+        insertColumn = `Guess${i}`;
+        break;
       }
-    });
+      else{
+        insertColumn = `Guess1`;
+      }
+    }
+
+    // Insert the guess into the first available Guess column for the given user
+    if (insertColumn !== '') {
+      // const insertQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
+      const insertQuery = await db.query(`INSERT INTO guesses (username, ${insertColumn}) VALUES ($1, $2);`,[username, guess]);
+      // await db.query(insertQuery);
+      console.log('Guess inserted successfully!');
+      const check = await db.query(`SELECT * FROM guesses WHERE username='${username}'`);
+      console.log(check);
+    }
+
+    // Send the response
+    res.redirect('/weatherdle');
+  } catch (err) {
+    // Handle the error
+    console.log(err);
+    res.status(500).send('Internal Server Error');
   }
 });
 
@@ -415,8 +417,8 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      //res.redirect('/datafetching');
-      res.redirect('/weatherdle')
+      res.redirect('/datafetching'); //this api helps the data to be inserted and then redirects to the weatherdle page if this is skipped the data will not be inserted into the table.
+      // res.redirect('/weatherdle')
     }
   })
   .catch(error => {
@@ -542,7 +544,7 @@ for(let i=0; i< stateCapitals.length;i++){
       //   if (error) throw error;
         
       
-      console.log(slongestday);
+      // console.log(slongestday);
        date1= '2022-12-01';
        date2= '2022-12-15'
       // // for winter data
