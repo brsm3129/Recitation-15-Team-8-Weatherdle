@@ -22,10 +22,18 @@ current streak. They are also shown how many guesses it took them each time they
 | Jamie Graves        | JamieGraves     | jagr3886@colorado.edu |
 | Bryson Smith        | brsm3129        | brsm3129@colorado.edu |
 ## 3 - Tech Stack
+![TechnologyStack - Software Dev.pdf](https://github.com/brsm3129/Recitation-15-Team-8-Weatherdle/files/11391779/TechnologyStack.-.Software.Dev.pdf)
 ## 4 - Prerequisites 
+Docker 
 ## 5 - Running Locally
 1. Clone Repo
 2. cd into repo/Source Code/src
 3. docker-compose up
 ## 6 - Running Tests
+1.✓ Returns the default welcome message (60ms)
+2.✓ positive : /login (127ms)
+3.✓ Negative : /login. Checking invalid name
+4.✓ Negative: /register missing password
+5.✓ Positive: /register:
 ## 7 - Deployed Application
+http://recitation-08-team-15.eastus.cloudapp.azure.com:3000/
