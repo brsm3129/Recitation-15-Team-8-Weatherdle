@@ -357,7 +357,7 @@ app.post('/weatherdle', (req,res) => {
         if (result.rows[0][`guess${i}`] === null) {
           insertColumn = `Guess${i}`;
           // Insert the guess into the first available Guess column for the given user
-          const insertQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
+          const insertQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}';`;
           db.query(insertQuery, (err, result) => {
             if (err) {
               // Handle the error
@@ -366,7 +366,7 @@ app.post('/weatherdle', (req,res) => {
             } else {
               // Send the response
               console.log('Guess inserted successfully!');
-              res.redirect('/weatherdle')
+              res.redirect('/weatherdle');
             }
           });
         }
@@ -412,8 +412,8 @@ app.post('/login', async(req,res)=>{
     else{
       req.session.user = user;
       req.session.save();
-      //res.redirect('/datafetching');
-      res.redirect('/weatherdle')
+      res.redirect('/datafetching'); //this api helps the data to be inserted and then redirects to the weatherdle page if this is skipped the data will not be inserted into the table.
+      // res.redirect('/weatherdle')
     }
   })
   .catch(error => {
@@ -539,7 +539,7 @@ for(let i=0; i< stateCapitals.length;i++){
       //   if (error) throw error;
         
       
-      console.log(slongestday);
+      // console.log(slongestday);
        date1= '2022-12-01';
        date2= '2022-12-15'
       // // for winter data
