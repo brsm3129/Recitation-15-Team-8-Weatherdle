@@ -323,6 +323,9 @@ app.get('/weatherdle', (req,res) => {
                 });
               }
             }
+            res.locals.guesses = guesses;
+            res.render('pages/weatherdle', {guesses: guesses});
+
           });
         } else {
 
