@@ -205,6 +205,9 @@ app.get('/weatherdle', (req,res) => {
   var username;
   if(req.session.user) {
     username = req.session.user.username;
+  } 
+  else{
+    res.redirect('/login')
   }
   console.log(username);
   if(username != undefined) {
