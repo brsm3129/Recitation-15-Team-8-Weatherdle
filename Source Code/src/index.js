@@ -252,6 +252,57 @@ app.get('/weatherdle', (req,res) => {
             })
           });
 });
+app.post('/complete',  (req, res) =>{
+
+  var username;
+  const isWinner = req.body.win;
+  const score = req.body.score;
+  if(req.session.user) {
+    username = req.session.user.username;
+    login = true;
+  } 
+  else{
+    res.redirect('/login');
+  }
+  var userQuery = `select * from userdata WHERE username = '${username}';`
+  db.any(userQuery).then(results => {
+
+    var streak = results[0].streak;
+    console.log(score);
+    var totalGuesses = results[0].totalguesses;
+    totalGuesses = totalGuesses + score;
+    var longestStreak = results[0].longeststreak;
+    var correctGuesses = results[0].correctguesses;
+
+    if(isWinner){
+      correctGuesses = correctGuesses + 1;
+      streak = streak+1;
+    }else{
+      streak = 0;
+    }
+    if(streak>longestStreak){
+      longestStreak = streak;
+    }
+    var totalGames = results[0].totalgames;
+    totalGames = totalGames + 1;
+    var avgGuess = totalGuesses;
+    if(totalGames){
+      avgGuess = totalGuesses/totalGames;
+    }
+
+    console.log(`Score: ${score}`);
+    let query = `UPDATE userdata SET streak = ${streak}, longestStreak =${longestStreak}, avgGuess=${avgGuess}, totalGames=${totalGames}, totalGuesses=${totalGuesses}, correctGuesses=${correctGuesses} WHERE username = '${username}';`;
+    db.any(query);
+    res.json({ success: true });
+});
+
+
+  
+
+ 
+ 
+
+});
 
 app.post('/weatherdle', async (req, res) => {
   
