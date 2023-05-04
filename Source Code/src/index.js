@@ -85,7 +85,7 @@ app.get('/', (req, res) => {
     //if user has a session stored pull up their game
     //if not pull up fresh page and instructions
   //res.json({message:'first visit'})
-  res.redirect('/weatherdle'); 
+  res.redirect('/login'); 
 });
 
 app.get('/login', (req, res) => {
@@ -205,8 +205,10 @@ app.get('/weatherdle', (req,res) => {
   var username;
   if(req.session.user) {
     username = req.session.user.username;
+  } 
+  else{
+    res.redirect('/login')
   }
-  console.log(username);
   if(username != undefined) {
     //get both the user's guesses and the target city data
     const userguesses = `SELECT * FROM guesses WHERE username = '${username}'`;
@@ -220,19 +222,16 @@ app.get('/weatherdle', (req,res) => {
       db.any(targetdataquery)
       .then(targetdata => {
         var tasks = [];
-        console.log(data[0])
         if(data[0].length > 0) {
           for(var i = 1; i <= 8; i++) {
             tasks.push(`SELECT * FROM weather_data WHERE location = '${data[0][0][`guess${i}`]}'`);
           }
-          console.log(tasks);
           db.task(`get all guess data`, task => {
             return task.batch([task.any(tasks[0]), task.any(tasks[1]), task.any(tasks[2]),task.any(tasks[3]),task.any(tasks[4]), task.any(tasks[5]),task.any(tasks[6]),task.any(tasks[7])]);
           })
           .then(function (guessdata) {
             var guesses = [];
             for(var i = 0; i < 8; i++) {
-              console.log(guessdata[i])
               if(guessdata[i].length > 0) {
                 correct_guess = targetdata[0].location == guessdata[i][0].location;
                 city_name = guessdata[i][0].location;
@@ -323,6 +322,9 @@ app.get('/weatherdle', (req,res) => {
                 });
               }
             }
+            res.locals.guesses = guesses;
+            res.render('pages/weatherdle', {guesses: guesses});
+
           });
         } else {
 
@@ -339,39 +341,52 @@ app.get('/weatherdle', (req,res) => {
     }
 });
 
-app.post('/weatherdle', (req,res) => {
-  const username = req.session.user;
+app.post('/weatherdle', async (req, res) => {
+  const username = req.session.user.username;
   const guess = req.body.city;
-  
-  // Find the first available Guess column for the given user
-  let insertColumn = '';
-  for (let i = 1; i <= 8; i++) {
-    const checkQuery = `SELECT Guess${i} FROM guesses WHERE username='${username}'`;
-    db.query(checkQuery, (err, result) => {
-      if (err) {
-        // Handle the error
-        console.log(err);
-        res.status(500).send('Internal Server Error');
-      } else {
-        // Check if the Guess column is empty
-        if (result.rows[0][`guess${i}`] === null) {
-          insertColumn = `Guess${i}`;
-          // Insert the guess into the first available Guess column for the given user
-          const insertQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}';`;
-          db.query(insertQuery, (err, result) => {
-            if (err) {
-              // Handle the error
-              console.log(err);
-              res.status(500).send('Internal Server Error');
-            } else {
-              // Send the response
-              console.log('Guess inserted successfully!');
-              res.redirect('/weatherdle');
-            }
-          });
+
+  try {
+    // Find the first available Guess column for the given user
+    let insertColumn = 'guess1';
+    var results = []
+    for (let i = 1; i <= 8; i++) {
+      const checkQuery = `SELECT Guess${i} FROM guesses WHERE username='${username}'`;
+      results[i-1] = await db.query(checkQuery);
+    }
+    if(results[0].length > 0) {
+      for( let i = 1; i <= 8; i++) {
+        insertColumn = `guess${i}`;
+        if(results[i-1][0][`${insertColumn}`] == null) {
+          i = 9;
+          break;
         }
       }
-    });
+    }
+    // Insert the guess into the first available Guess column for the given user
+    // if user is in the table, then update
+    
+    if (insertColumn !== '') {
+      var insertquery;
+      if(insertColumn === 'guess1') {
+        const insertQuery = await db.query(`INSERT INTO guesses (username, ${insertColumn}) VALUES ($1, $2);`,[username, guess]);
+        console.log('Guess inserted successfully!');
+        const check = await db.query(`SELECT * FROM guesses WHERE username='${username}'`);
+        console.log(check);
+      } else {
+        const updateQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
+        const updateResult = await db.query(updateQuery);
+        console.log('Guess inserted successfully!');
+        const check = await db.query(`SELECT * FROM guesses WHERE username='${username}'`);
+        console.log(check);
+      }
+    }
+
+    // Send the response
+    res.redirect('/weatherdle');
+  } catch (err) {
+    // Handle the error
+    console.log(err);
+    res.status(500).send('Internal Server Error');
   }
 });
 
@@ -382,19 +397,22 @@ app.post('/weatherdle', (req,res) => {
     // To-DO: Insert username and hashed password into 'users' table
     //hash the password using bcrypt library
     const hash = await bcrypt.hash(req.body.password, 10);
-
     // Insert username and hashed password into 'users' table
-    let query = db.query('INSERT INTO users (username, password) VALUES ($1, $2);', [req.body.username, hash]);
-    let query2 = db.query('INSERT INTO userdata (username, pfp, streak, longestStreak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ($1, 1, 0, 0, 0, 0, 0, 0);', [req.body.username]);
-      // Redirect to GET /login route page after data has been inserted successfully.
+    let query = `INSERT INTO users (username, password) VALUES ($1, $2) returning *;`;
+    let query2 =`INSERT INTO userdata (username, pfp, streak, longestStreak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ($1, 1, 0, 0, 0, 0, 0, 0);`;
+    const username = req.body.username;  
+    // Redirect to GET /login route page after data has been inserted successfully.
+
       db.task('get-everything', task => {
-        return task.batch([task.any(query), task.any(query2)]);
+        return task.batch([task.any(query,[username, hash]), task.any(query2,[username])]);
       })
       .then(query => {
         res.redirect('/login');
+        res.render('pages/login')
       })
       .catch(error => {
         // If the insert fails, redirect to GET /register route.
+        console.log(error);
         res.render('pages/register', { message: "Error: Registration Failed", error: true });
       });
   });
@@ -413,7 +431,7 @@ app.post('/login', async(req,res)=>{
       req.session.user = user;
       req.session.save();
       res.redirect('/datafetching'); //this api helps the data to be inserted and then redirects to the weatherdle page if this is skipped the data will not be inserted into the table.
-      // res.redirect('/weatherdle')
+      //res.redirect('/weatherdle')
     }
   })
   .catch(error => {
@@ -485,9 +503,9 @@ app.get("/datafetching",async(req,res)=>{
 for(let i=0; i< stateCapitals.length;i++){  
   const { state, city } = stateCapitals[i];
 
-  let smaxx=-1000;  let sminn=1000;  var slongestday=0;
+  let smaxx= -Infinity;  let sminn=Infinity;  var slongestday=0;
 
-  let wmaxx=-1000; let wminn=1000; let wlongestday=0;
+  let wmaxx=-Infinity; let wminn=Infinity; let wlongestday=0;
 
   //for summer data
   axios({
@@ -503,7 +521,7 @@ for(let i=0; i< stateCapitals.length;i++){
       key: process.env.API_KEY
     }, 
   })
-    .then(results => {
+    .then(async(results) => {
       const data = results.data;
       const { resolvedAddress, days } = data;
  
@@ -523,7 +541,8 @@ for(let i=0; i< stateCapitals.length;i++){
               const dateTimeString2=  formattedData[j][2]+'T'+formattedData[j][6];
               let sunrise= new Date(dateTimeString);
               let sunset= new Date(dateTimeString2);
-           daylength=sunset-sunrise
+           daylength=sunset-sunrise;
+           daylength=(daylength*(0.000000278)).toFixed(2);
 
           if(formattedData[j][4]<sminn){
             sminn=formattedData[j][4];
@@ -541,7 +560,7 @@ for(let i=0; i< stateCapitals.length;i++){
       
       // console.log(slongestday);
        date1= '2022-12-01';
-       date2= '2022-12-15'
+       date2= '2022-12-15';
       // // for winter data
       axios({
         url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date1}/${date2}`,
@@ -556,7 +575,7 @@ for(let i=0; i< stateCapitals.length;i++){
           key: process.env.API_KEY
         }, 
       })
-        .then(results => {
+        .then(async(results) => {
           const data = results.data;
           const { resolvedAddress, days } = data;
      
@@ -574,12 +593,16 @@ for(let i=0; i< stateCapitals.length;i++){
             let wmaxx=-1000;
             let wminn=1000;
             let wlongestday=0;
+
+            
+
             for(let j=0; j<formattedData.length; j++){
               const dateTimeString = formattedData[j][2]+'T'+formattedData[j][5];
               const dateTimeString2=  formattedData[j][2]+'T'+formattedData[j][6];
               let wsunrise= new Date(dateTimeString);
               let wsunset= new Date(dateTimeString2);
               let wdaylength=wsunset-wsunrise
+              wdaylength= (wdaylength*(0.000000278)).toFixed(2);
               if(formattedData[j][4]<wminn){
                 wminn=formattedData[j][4];
               }
@@ -593,8 +616,11 @@ for(let i=0; i< stateCapitals.length;i++){
     
           //   if (error) throw error;
             
-          });
+          
           let sass= formattedData[0][0]+','+formattedData[0][1];
+          if(wmaxx==-Infinity){
+            wmaxx=30; wminn=10;wlongestday=8;
+          }
       const query = `INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day , winter_high, winter_low,  winter_longest_day) VALUES('${sass}', ${smaxx}, ${sminn}, ${slongestday}, ${wmaxx}, ${wminn}, ${wlongestday});`
       db.any(query)
       .then((data)=>{
@@ -605,6 +631,7 @@ for(let i=0; i< stateCapitals.length;i++){
         console.log(err);
       });
     });
+  });
   }
   res.redirect('/weatherdle');
 }); 
