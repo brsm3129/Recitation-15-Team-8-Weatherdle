@@ -98,12 +98,14 @@ app.get('/register', (req, res) => {
 app.get('/profile', (req, res) => {
   var username = null;
   var isUser = false;
+  var login = false;
   if(!req.query.username){
     if (!req.session.user) {
       res.redirect('/weatherdle');
     } else {
       username = req.session.user.username;
       isUser = true;
+      login = true;
     }
   } else{
     username = req.query.username
@@ -112,7 +114,7 @@ app.get('/profile', (req, res) => {
   console.log(query);
 
     //Userdata query
-    var query = `select * from userdata WHERE username = '${username}';`
+    var query = `select * from userdata WHERE username = '${username}';`;
     //User ranking query
     var query2 = `select t.Rank from (select ROW_NUMBER() OVER(ORDER BY streak DESC) AS Rank, username FROM userdata) t where t.username = '${username}'`;
     var query3 = `select t.Rank from (select ROW_NUMBER() OVER(ORDER BY avgGuess ASC) AS Rank, username FROM userdata) t where t.username = '${username}'`;
@@ -127,6 +129,7 @@ app.get('/profile', (req, res) => {
     // as shown below
     .then(data => {
       res.render('pages/profile', {
+        login,
         user: data[0][0],
         rank: [data[1][0].rank, data[2][0].rank],
         isUser
@@ -182,39 +185,62 @@ app.post('/profile/change', (req,res) => {
 
 app.get('/leaderboard', (req, res) => {
   //order by streak, then by average if the streak is the same
+  var username = null;
+
   var query = "select * from userdata ORDER BY streak DESC, avgGuess ASC;";
+
   var scope = req.query.scope;
   var sort = req.query.sort;
+  var login = false;
+  
+    if (!req.session.user) {
+      res.redirect('/login');
+    } else {
+      username = req.session.user.username;
+      login = true;
+    }
+    var userQuery = `select * from userdata WHERE username = '${username}';`;
+
   //console.log(sort);
   if (sort == "avg"){
       //order by average, then by streak if the average is the same
     query = "select * from userdata ORDER BY avgGuess ASC, streak DESC;";
   }
-  db.any(query)
-  
-  .then(users =>{
+  if(username){
+    db.task('get-everything', task => {
+      return task.batch([task.any(query), task.any(userQuery)]);
+    })
+  .then(data =>{
+    console.log(userQuery);
     res.render('pages/leaderboard', {
-      users, 
+      login,
+      user: data[1][0],
+      users: data[0]
     });
   });
+}
 });
 
 //if user is not logged in, load an empty table
 //if user is logged in, retrieve guesses
 app.get('/weatherdle', (req,res) => {
+  var login = false;
+
   var username;
   if(req.session.user) {
     username = req.session.user.username;
+    login = true;
   } 
   else{
     res.redirect('/login')
   }
+  var userQuery = `select * from userdata WHERE username = '${username}';`
   if(username != undefined) {
     //get both the user's guesses and the target city data
     const userguesses = `SELECT * FROM guesses WHERE username = '${username}'`;
     const targetcity = `SELECT * FROM guesses WHERE username = 'targetcity'`;
     db.task('get-everything', task => {
-      return task.batch([task.any(userguesses), task.any(targetcity)]);
+      return task.batch([task.any(userguesses), task.any(targetcity),task.any(userQuery)]);
     })
     .then(function (data) {
       //get weather data for each guess and the target city
@@ -249,7 +275,7 @@ app.get('/weatherdle', (req,res) => {
                     correct: true
                   }
                   longest_day = {
-                    value : guessdata[i][0].summer_longest_day,
+                    value : `${Math.floor(guessdata[i][0].summer_longest_day)} hours and ${((guessdata[i][0].summer_longest_day - Math.floor(guessdata[i][0].summer_longest_day))*60).toPrecision(2)} minutes`,
                     higher: false,
                     close: false,
                     correct: true
@@ -267,7 +293,7 @@ app.get('/weatherdle', (req,res) => {
                     correct: true
                   }
                   shortest_day = {
-                    value : guessdata[i][0].winter_longest_day,
+                    value : `${Math.floor(guessdata[i][0].winter_longest_day)} hours and ${((guessdata[i][0].winter_longest_day - Math.floor(guessdata[i][0].winter_longest_day))*60).toPrecision(2)} minutes`,
                     higher: false,
                     close: false,
                     correct: true
@@ -286,7 +312,7 @@ app.get('/weatherdle', (req,res) => {
                     correct: false
                   }
                   longest_day = {
-                    value : guessdata[i][0].summer_longest_day,
+                    value : `${Math.floor(guessdata[i][0].summer_longest_day)} hours and ${((guessdata[i][0].summer_longest_day - Math.floor(guessdata[i][0].summer_longest_day))*60).toPrecision(2)} minutes`,
                     higher: (guessdata[i][0].summer_longest_day > targetdata[0].summer_longest_day),
                     close: ((guessdata[i][0].summer_longest_day - targetdata[0].summer_longest_day) < .25),
                     correct: false
@@ -304,7 +330,7 @@ app.get('/weatherdle', (req,res) => {
                     correct: false
                   }
                   shortest_day = {
-                    value : guessdata[i][0].winter_longest_day,
+                    value : `${Math.floor(guessdata[i][0].winter_longest_day)} hours and ${((guessdata[i][0].winter_longest_day - Math.floor(guessdata[i][0].winter_longest_day))*60).toPrecision(2)} minutes`,
                     higher: (guessdata[i][0].winter_longest_day > targetdata[0].winter_longest_day),
                     close: ((guessdata[i][0].winter_longest_day - targetdata[0].winter_longest_day) < .25),
                     correct: false
@@ -323,7 +349,10 @@ app.get('/weatherdle', (req,res) => {
               }
             }
             res.locals.guesses = guesses;
-            res.render('pages/weatherdle', {guesses: guesses});
+            res.render('pages/weatherdle', {
+              login,
+              user: data[2][0],
+              guesses: guesses});
 
           });
         } else {
