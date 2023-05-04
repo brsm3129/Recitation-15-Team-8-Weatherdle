@@ -5,7 +5,7 @@
             <!--Guesses Data should be a JSON array-->
 
             <!--Cities json, had to hardcode here cause couldn't figure out loading from a .json-->
-            <% var cities=3; var guesses=0; %>
+            <% var cities=13; var guesses=0; %>
                 <style>
                     #winmessage {
                         text-align: center;
@@ -14,6 +14,8 @@
                     z-index: -1;
                     }
                 </style>
+
+
                 <script>
                     //get all cities and data in a list
                     const weatherData = [
@@ -42,7 +44,7 @@
                 <%- locals.answer.winter_longest_day %>
             ]
 
-
+                    var isWinner = 0;
                     var value = 0;
                     var guesses = 0;
                     function answer() {
@@ -73,9 +75,21 @@
                             var messageElement = document.createElement('h1');
                             const divElement = document.getElementById('winmessage');
                             divElement.append(messageElement);
-                            document.getElementById("mymodal").style.display = "block"
+                            document.getElementById("guessCountMessage").innerHTML = "In only "+guesses+" guesses"
+                            isWinner = 1;
+                            openModal();
                         }
-
+                        if(guesses >= 6 && !(weatherData[value][0] == (answerData[0]))){
+                            const selector = document.getElementById(`selector`)
+                            selector.remove();
+                            var messageElement = document.createElement('h1');
+                            const divElement = document.getElementById('winmessage');
+                            divElement.append(messageElement);
+                            document.getElementById("guessCountMessage").innerHTML = "In only "+guesses+" guesses"
+                            isWinner = 0;
+                            document.getElementById('winModalMessage').innerHTML = "You Lose!";
+                            openModal();
+                        }
                     }
                     //get the city thats selected
                     function getComboA(selectObject) {
@@ -83,31 +97,44 @@
                         console.log(value);
 
                     }
+                    function openModal(){
+                        document.getElementById("myModal").style.display = "block";
+                    }
 
+                    function completeGame(){
+                        console.log("ok");
+
+                    fetch('/complete', {
+                        method: 'POST',
+                        headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+                        body: JSON.stringify({score: guesses,
+                        win: isWinner})
+
+                        
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                    if (data.success) {
+                        window.location.href = '/profile ';
+                        console.log("COOL");
+                    }
+                    });
+                }
                 </script>
+                
+                <div id="myModal" class="modal">
+              <div class="modal-content">
+                <h1 id="winModalMessage">You Win!</h1>
+                <h4 id = "guessCountMessage">In only x guesses</h4>
 
-
-
-<!-- Modal 
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog" id="mymodal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">In only x guesses</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <h2>YOU WIN</h2>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Understood</button>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-
+                <div class="modal-buttons">
+                  <button type="submit" class="btn btn-default btn-primary" onclick="completeGame()">Continue</button>
+                  </div>
+              </div>
+            </div>
 
                 <div id="winmessage" style="margin-left: auto; margin-right: auto;"></div>
                 <div class="container text-center align-items-center w-25" name="guesser" id="selector">
@@ -120,6 +147,7 @@
                         </select>
                     </div>
                     <div class="row mb-3">
+                        
                         <input type="submit" value="Submit" onclick="answer()">
                     </div>
                 </div>
