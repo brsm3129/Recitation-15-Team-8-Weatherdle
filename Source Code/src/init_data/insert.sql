@@ -18,16 +18,22 @@ INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day,
 INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
     VALUES ('San Fransisco, California', 72, 58, 14.8, 57, 46, 9.5);
 INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
-    VALUES ('Los Angeles, California', 80, 48, 14.2, 51, 39, 7.5);
+    VALUES ('Jeuno, Alaska', 64, 51, 18.3, 1, -3, 6.4);
 INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
-    VALUES ('Chicago, Illinois', 85, 55, 12.6, 52, 41, 8.7);
+    VALUES ('Phoenix, Arizona', 104, 79, 14.3, 67, 38, 10);
 INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
-    VALUES ('Miami, Florida', 70, 45, 14.8, 59, 43, 8.5);
+    VALUES ('New York, New York', 79, 64, 15.1, 44, 28, 9.3);
 INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
-    VALUES ('Atlanta, Georgia', 72, 58, 13.2, 57, 46, 9.8);
+    VALUES ('Honolulu, Hawaii', 87, 74, 13.4, 81, 67, 10.8);
 INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
-    VALUES ('Boston, Massachusetts', 66, 50, 15.8, 37, 36, 10.5);
+   VALUES ('Portland, Oregon', 74, 53, 15.7, 46, 37, 8.7);
 INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
-    VALUES ('Phoenix, Arizona', 77, 52, 14.4, 52, 44, 9.7);
+    VALUES ('Atlanta, Georgia', 90, 72, 14.4, 54, 36, 9.9);
 INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
-    VALUES ('New York City, New York', 67, 54, 13.6, 53, 48, 10.5);
+    VALUES ('Miami, Florida', 91, 78, 14.7, 76, 61, 10.5);
+INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
+    VALUES ('Albuquerque, New Mexico', 90, 62, 14.5, 48, 26, 9.8);
+INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
+    VALUES ('Cheyenne, Wyoming', 77, 49, 15.1, 40, 18, 9.2);
+INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day, winter_high, winter_low, winter_longest_day )
+    VALUES ('Las Vegas, Nevada', 105, 82, 14.6, 59, 41, 9.7);
