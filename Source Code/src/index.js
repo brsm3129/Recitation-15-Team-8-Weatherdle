@@ -246,7 +246,7 @@ app.get('/weatherdle', (req,res) => {
                     correct: true
                   }
                   longest_day = {
-                    value : guessdata[i][0].summer_longest_day,
+                    value : `${Math.floor(guessdata[i][0].summer_longest_day)} hours and ${((guessdata[i][0].summer_longest_day - Math.floor(guessdata[i][0].summer_longest_day))*60).toPrecision(2)} minutes`,
                     higher: false,
                     close: false,
                     correct: true
@@ -264,7 +264,7 @@ app.get('/weatherdle', (req,res) => {
                     correct: true
                   }
                   shortest_day = {
-                    value : guessdata[i][0].winter_longest_day,
+                    value : `${Math.floor(guessdata[i][0].winter_longest_day)} hours and ${((guessdata[i][0].winter_longest_day - Math.floor(guessdata[i][0].winter_longest_day))*60).toPrecision(2)} minutes`,
                     higher: false,
                     close: false,
                     correct: true
@@ -283,7 +283,7 @@ app.get('/weatherdle', (req,res) => {
                     correct: false
                   }
                   longest_day = {
-                    value : guessdata[i][0].summer_longest_day,
+                    value : `${Math.floor(guessdata[i][0].summer_longest_day)} hours and ${((guessdata[i][0].summer_longest_day - Math.floor(guessdata[i][0].summer_longest_day))*60).toPrecision(2)} minutes`,
                     higher: (guessdata[i][0].summer_longest_day > targetdata[0].summer_longest_day),
                     close: ((guessdata[i][0].summer_longest_day - targetdata[0].summer_longest_day) < .25),
                     correct: false
@@ -301,7 +301,7 @@ app.get('/weatherdle', (req,res) => {
                     correct: false
                   }
                   shortest_day = {
-                    value : guessdata[i][0].winter_longest_day,
+                    value : `${Math.floor(guessdata[i][0].winter_longest_day)} hours and ${((guessdata[i][0].winter_longest_day - Math.floor(guessdata[i][0].winter_longest_day))*60).toPrecision(2)} minutes`,
                     higher: (guessdata[i][0].winter_longest_day > targetdata[0].winter_longest_day),
                     close: ((guessdata[i][0].winter_longest_day - targetdata[0].winter_longest_day) < .25),
                     correct: false
