@@ -398,10 +398,11 @@ app.get("/datafetching",async(req,res)=>{
 
   // const stateCapitals = [
   //   { state: 'Colorado', city: 'Denver'},
-  //   { state: 'Alaska', city: 'Juneau'},
+  //   { state: 'Georgia', city: 'Atlanta'},
   //   { state: 'Arizona', city: 'Phoenix'},
   //   { state: 'Texas', city: 'Austin'},
   //   { state: 'California', city:'San Fransisco'},
+  //   { state: 'California', city: 'Los Angles'},
   //   { state: 'New York ', city:'New York City'},
   //   { state: 'Florida', city:'Maimi'},
   //   { state: 'Illinois', city:'Chicago'},
@@ -423,9 +424,9 @@ app.get("/datafetching",async(req,res)=>{
 for(let i=0; i< stateCapitals.length;i++){  
   const { state, city } = stateCapitals[i];
 
-  let smaxx=-1000;  let sminn=1000;  var slongestday=0;
+  let smaxx= -Infinity;  let sminn=Infinity;  var slongestday=0;
 
-  let wmaxx=-1000; let wminn=1000; let wlongestday=0;
+  let wmaxx=-Infinity; let wminn=Infinity; let wlongestday=0;
 
   //for summer data
   axios({
@@ -441,7 +442,7 @@ for(let i=0; i< stateCapitals.length;i++){
       key: process.env.API_KEY
     }, 
   })
-    .then(results => {
+    .then(async(results) => {
       const data = results.data;
       const { resolvedAddress, days } = data;
  
@@ -461,7 +462,8 @@ for(let i=0; i< stateCapitals.length;i++){
               const dateTimeString2=  formattedData[j][2]+'T'+formattedData[j][6];
               let sunrise= new Date(dateTimeString);
               let sunset= new Date(dateTimeString2);
-           daylength=sunset-sunrise
+           daylength=sunset-sunrise;
+           daylength=(daylength*(0.000000278)).toFixed(2);
 
           if(formattedData[j][4]<sminn){
             sminn=formattedData[j][4];
@@ -479,7 +481,7 @@ for(let i=0; i< stateCapitals.length;i++){
       
       // console.log(slongestday);
        date1= '2022-12-01';
-       date2= '2022-12-15'
+       date2= '2022-12-15';
       // // for winter data
       axios({
         url: `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}/${date1}/${date2}`,
@@ -494,7 +496,7 @@ for(let i=0; i< stateCapitals.length;i++){
           key: process.env.API_KEY
         }, 
       })
-        .then(results => {
+        .then(async(results) => {
           const data = results.data;
           const { resolvedAddress, days } = data;
      
@@ -512,12 +514,16 @@ for(let i=0; i< stateCapitals.length;i++){
             let wmaxx=-1000;
             let wminn=1000;
             let wlongestday=0;
+
+            
+
             for(let j=0; j<formattedData.length; j++){
               const dateTimeString = formattedData[j][2]+'T'+formattedData[j][5];
               const dateTimeString2=  formattedData[j][2]+'T'+formattedData[j][6];
               let wsunrise= new Date(dateTimeString);
               let wsunset= new Date(dateTimeString2);
               let wdaylength=wsunset-wsunrise
+              wdaylength= (wdaylength*(0.000000278)).toFixed(2);
               if(formattedData[j][4]<wminn){
                 wminn=formattedData[j][4];
               }
@@ -531,8 +537,11 @@ for(let i=0; i< stateCapitals.length;i++){
     
           //   if (error) throw error;
             
-          });
+          
           let sass= formattedData[0][0]+','+formattedData[0][1];
+          if(wmaxx==-Infinity){
+            wmaxx=30; wminn=10;wlongestday=8;
+          }
       const query = `INSERT INTO weather_data (location, summer_high, summer_low, summer_longest_day , winter_high, winter_low,  winter_longest_day) VALUES('${sass}', ${smaxx}, ${sminn}, ${slongestday}, ${wmaxx}, ${wminn}, ${wlongestday});`
       db.any(query)
       .then((data)=>{
@@ -543,6 +552,7 @@ for(let i=0; i< stateCapitals.length;i++){
         console.log(err);
       });
     });
+  });
   }
   res.redirect('/weatherdle');
 }); 
