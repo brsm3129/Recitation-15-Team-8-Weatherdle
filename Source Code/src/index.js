@@ -209,7 +209,6 @@ app.get('/weatherdle', (req,res) => {
   else{
     res.redirect('/login')
   }
-  console.log(username);
   if(username != undefined) {
     //get both the user's guesses and the target city data
     const userguesses = `SELECT * FROM guesses WHERE username = '${username}'`;
@@ -223,19 +222,16 @@ app.get('/weatherdle', (req,res) => {
       db.any(targetdataquery)
       .then(targetdata => {
         var tasks = [];
-        console.log(data[0])
         if(data[0].length > 0) {
           for(var i = 1; i <= 8; i++) {
             tasks.push(`SELECT * FROM weather_data WHERE location = '${data[0][0][`guess${i}`]}'`);
           }
-          console.log(tasks);
           db.task(`get all guess data`, task => {
             return task.batch([task.any(tasks[0]), task.any(tasks[1]), task.any(tasks[2]),task.any(tasks[3]),task.any(tasks[4]), task.any(tasks[5]),task.any(tasks[6]),task.any(tasks[7])]);
           })
           .then(function (guessdata) {
             var guesses = [];
             for(var i = 0; i < 8; i++) {
-              console.log(guessdata[i])
               if(guessdata[i].length > 0) {
                 correct_guess = targetdata[0].location == guessdata[i][0].location;
                 city_name = guessdata[i][0].location;
@@ -326,6 +322,9 @@ app.get('/weatherdle', (req,res) => {
                 });
               }
             }
+            res.locals.guesses = guesses;
+            res.render('pages/weatherdle', {guesses: guesses});
+
           });
         } else {
 
@@ -348,27 +347,36 @@ app.post('/weatherdle', async (req, res) => {
 
   try {
     // Find the first available Guess column for the given user
-    let insertColumn = '';
+    let insertColumn = 'guess1';
+    var results = []
     for (let i = 1; i <= 8; i++) {
       const checkQuery = `SELECT Guess${i} FROM guesses WHERE username='${username}'`;
-      const result = await db.query(checkQuery);
-      if (result.length > 0 && result === null) {
-        insertColumn = `Guess${i}`;
+      results[i-1] = await db.query(checkQuery);
+    }
+    for( let i = 1; i <= 8; i++) {
+      insertColumn = `guess${i}`;
+      if(results[i-1][0][`${insertColumn}`] == null) {
+        i = 9;
         break;
       }
-      else{
-        insertColumn = `Guess1`;
-      }
     }
-
     // Insert the guess into the first available Guess column for the given user
+    // if user is in the table, then update
+    
     if (insertColumn !== '') {
-      // const insertQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
-      const insertQuery = await db.query(`INSERT INTO guesses (username, ${insertColumn}) VALUES ($1, $2);`,[username, guess]);
-      // await db.query(insertQuery);
-      console.log('Guess inserted successfully!');
-      const check = await db.query(`SELECT * FROM guesses WHERE username='${username}'`);
-      console.log(check);
+      var insertquery;
+      if(insertColumn === 'guess1') {
+        const insertQuery = await db.query(`INSERT INTO guesses (username, ${insertColumn}) VALUES ($1, $2);`,[username, guess]);
+        console.log('Guess inserted successfully!');
+        const check = await db.query(`SELECT * FROM guesses WHERE username='${username}'`);
+        console.log(check);
+      } else {
+        const updateQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
+        const updateResult = await db.query(updateQuery);
+        console.log('Guess inserted successfully!');
+        const check = await db.query(`SELECT * FROM guesses WHERE username='${username}'`);
+        console.log(check);
+      }
     }
 
     // Send the response
@@ -418,7 +426,7 @@ app.post('/login', async(req,res)=>{
       req.session.user = user;
       req.session.save();
       res.redirect('/datafetching'); //this api helps the data to be inserted and then redirects to the weatherdle page if this is skipped the data will not be inserted into the table.
-      // res.redirect('/weatherdle')
+      //res.redirect('/weatherdle')
     }
   })
   .catch(error => {
