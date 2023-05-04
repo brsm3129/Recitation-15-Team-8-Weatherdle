@@ -478,10 +478,11 @@ app.get("/datafetching",async(req,res)=>{
 
   // const stateCapitals = [
   //   { state: 'Colorado', city: 'Denver'},
-  //   { state: 'Alaska', city: 'Juneau'},
+  //   { state: 'Georgia', city: 'Atlanta'},
   //   { state: 'Arizona', city: 'Phoenix'},
   //   { state: 'Texas', city: 'Austin'},
   //   { state: 'California', city:'San Fransisco'},
+  //   { state: 'California', city: 'Los Angles'},
   //   { state: 'New York ', city:'New York City'},
   //   { state: 'Florida', city:'Maimi'},
   //   { state: 'Illinois', city:'Chicago'},
