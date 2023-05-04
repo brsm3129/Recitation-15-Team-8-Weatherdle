@@ -1,165 +1,157 @@
 <%- include ('../partials/head') %>
-<%- include ('../partials/menu') %>
-<%- include ('../partials/message') %>
+    <%- include ('../partials/menu') %>
+        <%- include ('../partials/message') %>
 
-<!--Guesses Data should be a JSON array-->
-<%
-%>
-<!--Cities json, had to hardcode here cause couldn't figure out loading from a .json-->
-<%
-var city_names = {
-	cities: [
-	'Denver, Colorado',
-	'Austin, Texas',
-	'San Fransisco, California',
-	'Los Angeles, California',
-	'New York City, New York',
-	'Miami, Florida',
-	'Chicago, Illinois',
-	'Boston, Massachusetts',
-	'Atlanta, Georgia',
-	'Phoenix, Arizona'
-	]
-}
-%>
-<div class="container text-center align-items-center w-25" name="guesser">
-	<form class="mb-3" action="/weatherdle" method="post">
-		<div class="row mb-3">
-			<label for="city">City</label>
-			<select id="city" name="city">
-				<% for(var i = 0; i < city_names.cities.length; i++) { %>
-					<option value="<%-city_names.cities[i]%>"><%-city_names.cities[i]%></option>
-				<% } %>
-			</select>
-		</div>
-		<div class="row mb-3">
-			<input type="submit" value="Submit">
-		</div>
-	</form>
-</div>
-<div class="container" name="table">
-	<p>Guess <%- locals.guesses.length%>/8</p>
-	<table class="table">
-		<thead>
-			<tr>
-				<th scope="col" class="guess-header">City Name</th>
-				<th scope="col" class="guess-header">Summer Hi</th>
-				<th scope="col" class="guess-header">Summer Lo</th>
-				<th scope="col" class="guess-header">Longest Day</th>
-				<th scope="col" class="guess-header">Winter Hi</th>
-				<th scope="col" class="guess-header">Winter Lo</th>
-				<th scope="col" class="guess-header">Shortest Day</th>
-			</tr>
-		</thead>
-		<tbody>
-            <% for(var i = 0; i < locals.guesses.length; i++) { %>
-                <%if(locals.guesses[i].correct_guess) { %>
-                    <tr class="bg-success">
-                <%} else {%>
-                    <tr>
-                <% } %>
-                    <!-- -->
-                    <th scope="row" class="guess-header"><%- locals.guesses[i].city_name%></th>
-                    <%if(locals.guesses[i].summer_hi.close == true) { %>
-                        <td class="guess-square grey-border-bottom bg-warning">
-                    <% } else { %>
-                        <td class="guess-square grey-border-bottom">
-                    <% } %>
-                            <div class="top-box">
-                                <div><%- locals.guesses[i].summer_hi.value%></div>
-                                <% if(locals.guesses[i].summer_hi.correct == false) { %>
-                                    <% if(locals.guesses[i].summer_hi.higher) { %>
-                                        <div class="arrow">↑</div>
-                                    <% } else { %>
-                                        <div class="arrow">↓</div>
-                                    <% } %>
-                                <% } %>
-                            </div>
-                        </td>
-                    <%if(locals.guesses[i].summer_lo.close == true) { %>
-                        <td class="guess-square grey-border-bottom bg-warning">
-                    <% } else { %>
-                        <td class="guess-square grey-border-bottom ">
-                    <% } %>
-                            <div class="top-box">
-                                <div><%- locals.guesses[i].summer_lo.value%></div>
-                                <% if(locals.guesses[i].summer_lo.correct == false) { %>
-                                    <% if(locals.guesses[i].summer_lo.higher) { %>
-                                        <div class="arrow">↑</div>
-                                    <% } else { %>
-                                        <div class="arrow">↓</div>
-                                    <% } %>
-                                <% } %>
-                            </div>
-                        </td>
-                    <%if(locals.guesses[i].longest_day.close == true) { %>
-                        <td class="guess-square grey-border-bottom bg-warning">
-                    <% } else { %>
-                        <td class="guess-square grey-border-bottom ">
-                    <% } %>
-                            <div class="top-box">
-                                <div><%- locals.guesses[i].longest_day.value%></div>
-                                <% if(locals.guesses[i].longest_day.correct == false) { %>
-                                    <% if(locals.guesses[i].longest_day.higher) { %>
-                                        <div class="arrow">↑</div>
-                                    <% } else { %>
-                                        <div class="arrow">↓</div>
-                                    <% } %>
-                                <% } %>
-                            </div>
-                        </td>
-                    <%if(locals.guesses[i].winter_hi.close == true) { %>
-                        <td class="guess-square grey-border-bottom bg-warning">
-                    <% } else { %>
-                        <td class="guess-square grey-border-bottom ">
-                    <% } %>
-                            <div class="top-box">
-                                <div><%- locals.guesses[i].winter_hi.value%></div>
-                                <% if(locals.guesses[i].winter_hi.correct == false) { %>
-                                    <% if(locals.guesses[i].winter_hi.higher) { %>
-                                        <div class="arrow">↑</div>
-                                    <% } else { %>
-                                        <div class="arrow">↓</div>
-                                    <% } %>
-                                <% } %>
-                            </div>
-                        </td>
-                    <%if(locals.guesses[i].winter_lo.close == true) { %>
-                        <td class="guess-square grey-border-bottom bg-warning">
-                    <% } else { %>
-                        <td class="guess-square grey-border-bottom ">
-                    <% } %>
-                            <div class="top-box">
-                                <div><%- locals.guesses[i].winter_lo.value%></div>
-                                <% if(locals.guesses[i].winter_lo.correct == false) { %>
-                                    <% if(locals.guesses[i].winter_lo.higher) { %>
-                                        <div class="arrow">↑</div>
-                                    <% } else { %>
-                                        <div class="arrow">↓</div>
-                                    <% } %>
-                                <% } %>
-                            </div>
-                        </td>
-                    <%if(locals.guesses[i].shortest_day.close == true) { %>
-                        <td class="guess-square grey-border-bottom bg-warning">
-                    <% } else { %>
-                        <td class="guess-square grey-border-bottom ">
-                    <% } %>
-                            <div class="top-box">
-                                <div><%- locals.guesses[i].shortest_day.value%></div>
-                                <% if(locals.guesses[i].shortest_day.correct == false) { %>
-                                    <% if(locals.guesses[i].shortest_day.higher) { %>
-                                        <div class="arrow">↑</div>
-                                    <% } else { %>
-                                        <div class="arrow">↓</div>
-                                    <% } %>
-                                <% } %>
-                            </div>
-                        </td>
-                </tr>
-            <%} %>
-		</tbody>
-	</table>
-</div>
+            <!--Guesses Data should be a JSON array-->
 
-<%- include ('../partials/footer') %>
+            <!--Cities json, had to hardcode here cause couldn't figure out loading from a .json-->
+            <% var cities=3; var guesses=0; %>
+                <style>
+                    #winmessage {
+                        text-align: center;
+                    }
+                    .modal-backdrop {
+                    z-index: -1;
+                    }
+                </style>
+                <script>
+                    //get all cities and data in a list
+                    const weatherData = [
+         <% for (let i = 0; i < cities; i++) { %>
+                        [
+                            "<%- locals.weather[i].location %>", 
+                <%- locals.weather[i].summer_high %> , 
+                <%- locals.weather[i].summer_low %> ,
+                <%- locals.weather[i].summer_longest_day %> ,
+                <%- locals.weather[i].winter_high %> ,
+                <%- locals.weather[i].winter_low %> ,
+                <%- locals.weather[i].winter_longest_day %> 
+         ],
+        <% } %>
+                        []
+        ];
+
+                    //get the answer's data
+                    const answerData = [
+                        "<%- locals.answer.location %>", 
+                <%- locals.answer.summer_high %> , 
+                <%- locals.answer.summer_low %> ,
+                <%- locals.answer.summer_longest_day %>,
+                <%- locals.answer.winter_high %> ,
+                <%- locals.answer.winter_low %> ,
+                <%- locals.answer.winter_longest_day %>
+            ]
+
+
+                    var value = 0;
+                    var guesses = 0;
+                    function answer() {
+                        document.getElementById(`option${value}`).disabled = true;
+                        //iterate through each element and compare to answer
+                        for (let i = 0; i < 7; i++) {
+                            console.log(value);
+                            document.getElementById(`answer${i},${guesses}`).innerHTML = weatherData[value][i];
+                            if (weatherData[value][i] > answerData[i]) {
+                                document.getElementById(`arrow${i},${guesses}`).innerHTML = "↓";
+                            } else {
+                                if (weatherData[value][i] != answerData[i]) {
+                                    document.getElementById(`arrow${i},${guesses}`).innerHTML = "↑";
+                                }
+                            }
+                            if (weatherData[value][0] == (answerData[0])) {
+                                document.getElementById(`box${i},${guesses}`).setAttribute("class", "guess-square bg-success");
+                            } else
+                                if (i != 0 && (weatherData[value][i] - answerData[i] <= 10 && weatherData[value][i] - answerData[i] >= -10)) {
+                                    document.getElementById(`box${i},${guesses}`).setAttribute("class", "guess-square grey-border-bottom bg-warning");
+                                }
+                        }
+                        guesses = guesses + 1;
+                        document.getElementById('guess').innerHTML = "Guess " + guesses + "/8";
+                        if (weatherData[value][0] == (answerData[0])) {
+                            const selector = document.getElementById(`selector`)
+                            selector.remove();
+                            var messageElement = document.createElement('h1');
+                            const divElement = document.getElementById('winmessage');
+                            divElement.append(messageElement);
+                            document.getElementById("mymodal").style.display = "block"
+                        }
+
+                    }
+                    //get the city thats selected
+                    function getComboA(selectObject) {
+                        value = selectObject.value;
+                        console.log(value);
+
+                    }
+
+                </script>
+
+
+
+<!-- Modal 
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog" id="mymodal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">In only x guesses</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h2>YOU WIN</h2>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+
+                <div id="winmessage" style="margin-left: auto; margin-right: auto;"></div>
+                <div class="container text-center align-items-center w-25" name="guesser" id="selector">
+                    <div class="row mb-3">
+                        <label for="city">City</label>
+                        <select id="city" name="city" onchange="getComboA(this)">
+                            <% for(var i=0; i < cities; i++) { %>
+                                <option value="<%- i %>" id="option<%- i %>"><%-locals.weather[i].location %></option>
+                                <% } %>
+                        </select>
+                    </div>
+                    <div class="row mb-3">
+                        <input type="submit" value="Submit" onclick="answer()">
+                    </div>
+                </div>
+                <div class="container" name="table">
+                    <p id="guess">Guess 0/8</p>
+                    <table class="table" style="width:70%; margin-left: auto; margin-right: auto;">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="guess-header">City Name</th>
+                                <th scope="col" class="guess-header">Summer Hi</th>
+                                <th scope="col" class="guess-header">Summer Lo</th>
+                                <th scope="col" class="guess-header">Longest Day</th>
+                                <th scope="col" class="guess-header">Winter Hi</th>
+                                <th scope="col" class="guess-header">Winter Lo</th>
+                                <th scope="col" class="guess-header">Shortest Day</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% var boxes="" ; for(let i=0; i<6; i++){ boxes="<tr>" + boxes; for(let j=0; j<7; j++){
+                                boxes=boxes + `<td class="guess-square" id="box`+j+`,`+i+`">
+                                <div class="top-box">
+                                    <div id="answer`+j+`,`+i+`"> </div>
+                                    <div class="arrow" id="arrow`+j+`,`+i+`"> </div>
+                                </div>
+                                </td>`;
+                                }
+                                boxes = boxes + "</tr>"
+                                }
+                                %>
+                                <%- boxes %>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <%- include ('../partials/footer') %>
