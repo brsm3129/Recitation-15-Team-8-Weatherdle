@@ -350,11 +350,13 @@ app.post('/weatherdle', async (req, res) => {
       const checkQuery = `SELECT Guess${i} FROM guesses WHERE username='${username}'`;
       results[i-1] = await db.query(checkQuery);
     }
-    for( let i = 1; i <= 8; i++) {
-      insertColumn = `guess${i}`;
-      if(results[i-1][0][`${insertColumn}`] == null) {
-        i = 9;
-        break;
+    if(results[0].length > 0) {
+      for( let i = 1; i <= 8; i++) {
+        insertColumn = `guess${i}`;
+        if(results[i-1][0][`${insertColumn}`] == null) {
+          i = 9;
+          break;
+        }
       }
     }
     // Insert the guess into the first available Guess column for the given user
