@@ -397,19 +397,22 @@ app.post('/weatherdle', async (req, res) => {
     // To-DO: Insert username and hashed password into 'users' table
     //hash the password using bcrypt library
     const hash = await bcrypt.hash(req.body.password, 10);
-
     // Insert username and hashed password into 'users' table
-    let query = db.query('INSERT INTO users (username, password) VALUES ($1, $2);', [req.body.username, hash]);
-    let query2 = db.query('INSERT INTO userdata (username, pfp, streak, longestStreak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ($1, 1, 0, 0, 0, 0, 0, 0);', [req.body.username]);
-      // Redirect to GET /login route page after data has been inserted successfully.
+    let query = `INSERT INTO users (username, password) VALUES ($1, $2) returning *;`;
+    let query2 =`INSERT INTO userdata (username, pfp, streak, longestStreak, avgGuess, totalGames, totalGuesses, correctGuesses) VALUES ($1, 1, 0, 0, 0, 0, 0, 0);`;
+    const username = req.body.username;  
+    // Redirect to GET /login route page after data has been inserted successfully.
+
       db.task('get-everything', task => {
-        return task.batch([task.any(query), task.any(query2)]);
+        return task.batch([task.any(query,[username, hash]), task.any(query2,[username])]);
       })
       .then(query => {
         res.redirect('/login');
+        res.render('pages/login')
       })
       .catch(error => {
         // If the insert fails, redirect to GET /register route.
+        console.log(error);
         res.render('pages/register', { message: "Error: Registration Failed", error: true });
       });
   });
