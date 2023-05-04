@@ -235,188 +235,28 @@ app.get('/weatherdle', (req,res) => {
     res.redirect('/login')
   }
   var userQuery = `select * from userdata WHERE username = '${username}';`
-  if(username != undefined) {
     //get both the user's guesses and the target city data
-    const userguesses = `SELECT * FROM guesses WHERE username = '${username}'`;
-    const targetcity = `SELECT * FROM guesses WHERE username = 'targetcity'`;
+    const dataquery = `SELECT * FROM weather_data`;
+    const numEntries = `SELECT count(*) FROM weather_data`;
+
     db.task('get-everything', task => {
-      return task.batch([task.any(userguesses), task.any(targetcity),task.any(userQuery)]);
+      return task.batch([task.any(dataquery),task.any(userQuery),task.any(numEntries)]);
     })
     .then(function (data) {
-      //get weather data for each guess and the target city
-      const targetdataquery = `SELECT * FROM weather_data WHERE location = '${data[1][0].guess1}'`
-      db.any(targetdataquery)
-      .then(targetdata => {
-        var tasks = [];
-        if(data[0].length > 0) {
-          for(var i = 1; i <= 8; i++) {
-            tasks.push(`SELECT * FROM weather_data WHERE location = '${data[0][0][`guess${i}`]}'`);
-          }
-          db.task(`get all guess data`, task => {
-            return task.batch([task.any(tasks[0]), task.any(tasks[1]), task.any(tasks[2]),task.any(tasks[3]),task.any(tasks[4]), task.any(tasks[5]),task.any(tasks[6]),task.any(tasks[7])]);
-          })
-          .then(function (guessdata) {
-            var guesses = [];
-            for(var i = 0; i < 8; i++) {
-              if(guessdata[i].length > 0) {
-                correct_guess = targetdata[0].location == guessdata[i][0].location;
-                city_name = guessdata[i][0].location;
-                if(correct_guess) {
-                  summer_hi = {
-                    value : guessdata[i][0].summer_high,
-                    higher: false,
-                    close: false,
-                    correct: true
-                  }
-                  summer_lo = {
-                    value : guessdata[i][0].summer_low,
-                    higher: false,
-                    close: false,
-                    correct: true
-                  }
-                  longest_day = {
-                    value : `${Math.floor(guessdata[i][0].summer_longest_day)} hours and ${((guessdata[i][0].summer_longest_day - Math.floor(guessdata[i][0].summer_longest_day))*60).toPrecision(2)} minutes`,
-                    higher: false,
-                    close: false,
-                    correct: true
-                  }
-                  winter_hi = {
-                    value : guessdata[i][0].winter_high,
-                    higher: false,
-                    close: false,
-                    correct: true
-                  }
-                  winter_lo = {
-                    value : guessdata[i][0].winter_low,
-                    higher: false,
-                    close: false,
-                    correct: true
-                  }
-                  shortest_day = {
-                    value : `${Math.floor(guessdata[i][0].winter_longest_day)} hours and ${((guessdata[i][0].winter_longest_day - Math.floor(guessdata[i][0].winter_longest_day))*60).toPrecision(2)} minutes`,
-                    higher: false,
-                    close: false,
-                    correct: true
-                  }
-                } else {
-                  summer_hi = {
-                    value : guessdata[i][0].summer_high,
-                    higher: (guessdata[i][0].summer_high > targetdata[0].summer_high),
-                    close: ((guessdata[i][0].summer_high - targetdata[0].summer_high) < 5),
-                    correct: false
-                  }
-                  summer_lo = {
-                    value : guessdata[i][0].summer_low,
-                    higher: (guessdata[i][0].summer_low > targetdata[0].summer_low),
-                    close: ((guessdata[i][0].summer_low - targetdata[0].summer_low) < 5),
-                    correct: false
-                  }
-                  longest_day = {
-                    value : `${Math.floor(guessdata[i][0].summer_longest_day)} hours and ${((guessdata[i][0].summer_longest_day - Math.floor(guessdata[i][0].summer_longest_day))*60).toPrecision(2)} minutes`,
-                    higher: (guessdata[i][0].summer_longest_day > targetdata[0].summer_longest_day),
-                    close: ((guessdata[i][0].summer_longest_day - targetdata[0].summer_longest_day) < .25),
-                    correct: false
-                  }
-                  winter_hi = {
-                    value : guessdata[i][0].winter_high,
-                    higher: (guessdata[i][0].winter_high > targetdata[0].winter_high),
-                    close: ((guessdata[i][0].winter_high - targetdata[0].winter_high) < 5),
-                    correct: false
-                  }
-                  winter_lo = {
-                    value : guessdata[i][0].winter_low,
-                    higher: (guessdata[i][0].winter_low > targetdata[0].winter_low),
-                    close: ((guessdata[i][0].winter_low - targetdata[0].winter_low) < 5),
-                    correct: false
-                  }
-                  shortest_day = {
-                    value : `${Math.floor(guessdata[i][0].winter_longest_day)} hours and ${((guessdata[i][0].winter_longest_day - Math.floor(guessdata[i][0].winter_longest_day))*60).toPrecision(2)} minutes`,
-                    higher: (guessdata[i][0].winter_longest_day > targetdata[0].winter_longest_day),
-                    close: ((guessdata[i][0].winter_longest_day - targetdata[0].winter_longest_day) < .25),
-                    correct: false
-                  }
-                }
-                guesses.push({
-                  correct_guess: correct_guess,
-                  city_name: city_name,
-                  summer_hi: summer_hi,
-                  summer_lo: summer_lo,
-                  longest_day: longest_day,
-                  winter_hi: winter_hi,
-                  winter_lo: winter_lo,
-                  shortest_day: shortest_day
-                });
-              }
-            }
-            res.locals.guesses = guesses;
             res.render('pages/weatherdle', {
               login,
-              user: data[2][0],
-              guesses: guesses});
-
+              length: 3,
+              user: data[1][0],
+              weather: data[0],
+              answer: data[0][1]
+            })
           });
-        } else {
-
-          res.locals.guesses = [];
-          res.render('pages/weatherdle', {guesses: []});
-        }
-      });
-        
-    })
-    } else {
-      res.locals.guesses = [];
-      res.locals.username = [];
-      res.render('pages/weatherdle');
-    }
 });
 
 app.post('/weatherdle', async (req, res) => {
-  const username = req.session.user.username;
-  const guess = req.body.city;
-
-  try {
-    // Find the first available Guess column for the given user
-    let insertColumn = 'guess1';
-    var results = []
-    for (let i = 1; i <= 8; i++) {
-      const checkQuery = `SELECT Guess${i} FROM guesses WHERE username='${username}'`;
-      results[i-1] = await db.query(checkQuery);
-    }
-    if(results[0].length > 0) {
-      for( let i = 1; i <= 8; i++) {
-        insertColumn = `guess${i}`;
-        if(results[i-1][0][`${insertColumn}`] == null) {
-          i = 9;
-          break;
-        }
-      }
-    }
-    // Insert the guess into the first available Guess column for the given user
-    // if user is in the table, then update
-    
-    if (insertColumn !== '') {
-      var insertquery;
-      if(insertColumn === 'guess1') {
-        const insertQuery = await db.query(`INSERT INTO guesses (username, ${insertColumn}) VALUES ($1, $2);`,[username, guess]);
-        console.log('Guess inserted successfully!');
-        const check = await db.query(`SELECT * FROM guesses WHERE username='${username}'`);
-        console.log(check);
-      } else {
-        const updateQuery = `UPDATE guesses SET ${insertColumn}='${guess}' WHERE username='${username}'`;
-        const updateResult = await db.query(updateQuery);
-        console.log('Guess inserted successfully!');
-        const check = await db.query(`SELECT * FROM guesses WHERE username='${username}'`);
-        console.log(check);
-      }
-    }
-
-    // Send the response
+  
     res.redirect('/weatherdle');
-  } catch (err) {
-    // Handle the error
-    console.log(err);
-    res.status(500).send('Internal Server Error');
-  }
+
 });
 
   // Register
