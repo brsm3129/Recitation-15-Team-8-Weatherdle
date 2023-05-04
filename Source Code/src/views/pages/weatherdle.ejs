@@ -5,7 +5,7 @@
             <!--Guesses Data should be a JSON array-->
 
             <!--Cities json, had to hardcode here cause couldn't figure out loading from a .json-->
-            <% var cities=3; var guesses=0; %>
+            <% var cities=13; var guesses=0; %>
                 <style>
                     #winmessage {
                         text-align: center;
@@ -79,8 +79,16 @@
                             isWinner = 1;
                             openModal();
                         }
-                        if(guesses >= 8 && !(weatherData[value][0] == (answerData[0]))){
+                        if(guesses >= 6 && !(weatherData[value][0] == (answerData[0]))){
+                            const selector = document.getElementById(`selector`)
+                            selector.remove();
+                            var messageElement = document.createElement('h1');
+                            const divElement = document.getElementById('winmessage');
+                            divElement.append(messageElement);
+                            document.getElementById("guessCountMessage").innerHTML = "In only "+guesses+" guesses"
+                            isWinner = 0;
                             document.getElementById('winModalMessage').innerHTML = "You Lose!";
+                            openModal();
                         }
                     }
                     //get the city thats selected
