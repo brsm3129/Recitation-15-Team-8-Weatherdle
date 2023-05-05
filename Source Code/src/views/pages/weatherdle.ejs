@@ -68,7 +68,7 @@
                                 }
                         }
                         guesses = guesses + 1;
-                        document.getElementById('guess').innerHTML = "Guess " + guesses + "/8";
+                        document.getElementById('guess').innerHTML = "Guess " + guesses + "/6";
                         if (weatherData[value][0] == (answerData[0])) {
                             const selector = document.getElementById(`selector`)
                             selector.remove();
@@ -152,7 +152,7 @@
                     </div>
                 </div>
                 <div class="container" name="table">
-                    <p id="guess">Guess 0/8</p>
+                    <p id="guess">Guess 0/6</p>
                     <table class="table" style="width:70%; margin-left: auto; margin-right: auto;">
                         <thead>
                             <tr>
